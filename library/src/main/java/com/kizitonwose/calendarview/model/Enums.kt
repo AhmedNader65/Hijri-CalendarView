@@ -22,14 +22,21 @@ enum class DayOwner {
      */
     NEXT_MONTH
 }
+enum class TYPE {
+
+    HIJRI,
+
+    GREGORIAN,
+
+}
 
 /**
  * Determines how outDates are generated for each month on the calendar.
  */
 enum class OutDateStyle {
     /**
-     * The calendar will generate outDates until it reaches
-     * the first end of a row. This means that if  a month
+     * the calendar will generate outdates until it reaches
+     * the first end of a row. this means that if  a month
      * has 6 rows, it will display 6 rows and if a month
      * has 5 rows, it will display 5 rows.
      */

@@ -78,7 +78,7 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
         }
 
         val currentMonth = YearMonth.now()
-        binding.exFourCalendar.setup(currentMonth, currentMonth.plusMonths(12), daysOfWeek.first())
+//        binding.exFourCalendar.setup(currentMonth, currentMonth.plusMonths(12), daysOfWeek.first())
         binding.exFourCalendar.scrollToMonth(currentMonth)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
@@ -169,13 +169,13 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
         class MonthViewContainer(view: View) : ViewContainer(view) {
             val textView = Example4CalendarHeaderBinding.bind(view).exFourHeaderText
         }
-        binding.exFourCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
-            override fun create(view: View) = MonthViewContainer(view)
-            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
-                val monthTitle = "${month.yearMonth.month.name.toLowerCase().capitalize()} ${month.year}"
-                container.textView.text = monthTitle
-            }
-        }
+//        binding.exFourCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
+//            override fun create(view: View) = MonthViewContainer(view)
+//            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
+//                val monthTitle = "${month.yearMonth.month.name.toLowerCase().capitalize()} ${month.year}"
+//                container.textView.text = monthTitle
+//            }
+//        }
 
         binding.exFourSaveButton.setOnClickListener click@{
             val startDate = startDate

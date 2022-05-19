@@ -2,6 +2,7 @@ package com.kizitonwose.calendarviewsample
 
 import android.animation.ValueAnimator
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
@@ -9,9 +10,11 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
+import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.model.InDateStyle
+import com.kizitonwose.calendarview.model.TYPE
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarview.utils.next
@@ -34,7 +37,7 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
     private lateinit var binding: Example1FragmentBinding
 
     private val selectedDates = mutableSetOf<LocalDate>()
-    private val today = LocalDate.now()
+    private var today = 0
     private val monthTitleFormatter = DateTimeFormatter.ofPattern("MMMM")
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,10 +51,14 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
             }
         }
 
+//        val calendar = UmmalquraCalendar()
+        val calendar = Calendar.getInstance()
+
         val currentMonth = YearMonth.now()
+        today = calendar.get(Calendar.DAY_OF_MONTH)
         val startMonth = currentMonth.minusMonths(10)
         val endMonth = currentMonth.plusMonths(10)
-        binding.exOneCalendar.setup(startMonth, endMonth, daysOfWeek.first())
+        binding.exOneCalendar.setup(daysOfWeek.first(), TYPE.HIJRI)
         binding.exOneCalendar.scrollToMonth(currentMonth)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
@@ -85,7 +92,7 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
                             textView.setTextColorRes(R.color.example_1_bg)
                             textView.setBackgroundResource(R.drawable.example_1_selected_bg)
                         }
-                        today == day.date -> {
+                        today == day.date.dayOfMonth -> {
                             textView.setTextColorRes(R.color.example_1_white)
                             textView.setBackgroundResource(R.drawable.example_1_today_bg)
                         }
@@ -103,8 +110,12 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
 
         binding.exOneCalendar.monthScrollListener = {
             if (binding.exOneCalendar.maxRowCount == 6) {
-                binding.exOneYearText.text = it.yearMonth.year.toString()
-                binding.exOneMonthText.text = monthTitleFormatter.format(it.yearMonth)
+                binding.exOneYearText.text = it.calendar.get(Calendar.YEAR).toString()
+                binding.exOneMonthText.text = (it.calendar.getDisplayName(
+                    Calendar.MONTH,
+                    Calendar.SHORT,
+                    Locale("ar")
+                ))       // ربيع 2 ).toString()
             } else {
                 // In week mode, we show the header a bit differently.
                 // We show indices with dates from different months since

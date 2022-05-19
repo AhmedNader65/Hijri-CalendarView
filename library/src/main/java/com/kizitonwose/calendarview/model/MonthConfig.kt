@@ -1,18 +1,19 @@
 package com.kizitonwose.calendarview.model
 
-import com.kizitonwose.calendarview.utils.next
+import android.util.Log
+import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import kotlinx.coroutines.Job
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.WeekFields
+import java.util.*
 
 internal data class MonthConfig(
     internal val outDateStyle: OutDateStyle,
     internal val inDateStyle: InDateStyle,
     internal val maxRowCount: Int,
-    internal val startMonth: YearMonth,
-    internal val endMonth: YearMonth,
+    internal val calendar: Calendar,
     internal val firstDayOfWeek: DayOfWeek,
     internal val hasBoundaries: Boolean,
     internal val job: Job
@@ -20,9 +21,9 @@ internal data class MonthConfig(
 
     internal val months: List<CalendarMonth> = run {
         return@run if (hasBoundaries) {
-            generateBoundedMonths(startMonth, endMonth, firstDayOfWeek, maxRowCount, inDateStyle, outDateStyle, job)
+            generateBoundedMonths(calendar, firstDayOfWeek, maxRowCount, inDateStyle, outDateStyle, job)
         } else {
-            generateUnboundedMonths(startMonth, endMonth, firstDayOfWeek, maxRowCount, inDateStyle, outDateStyle, job)
+            generateUnboundedMonths(calendar, firstDayOfWeek, maxRowCount, inDateStyle, outDateStyle, job)
         }
     }
 
@@ -36,8 +37,7 @@ internal data class MonthConfig(
          * to fit in the [maxRowCount].
          */
         fun generateBoundedMonths(
-            startMonth: YearMonth,
-            endMonth: YearMonth,
+            calendar: Calendar,
             firstDayOfWeek: DayOfWeek,
             maxRowCount: Int,
             inDateStyle: InDateStyle,
@@ -45,36 +45,30 @@ internal data class MonthConfig(
             job: Job = uninterruptedJob
         ): List<CalendarMonth> {
             val months = mutableListOf<CalendarMonth>()
-            var currentMonth = startMonth
-            while (currentMonth <= endMonth && job.isActive) {
-                val generateInDates = when (inDateStyle) {
-                    InDateStyle.ALL_MONTHS -> true
-                    InDateStyle.FIRST_MONTH -> currentMonth == startMonth
-                    InDateStyle.NONE -> false
-                }
-
-                val weekDaysGroup =
-                    generateWeekDays(currentMonth, firstDayOfWeek, generateInDates, outDateStyle)
-
-                // Group rows by maxRowCount into CalendarMonth classes.
-                val calendarMonths = mutableListOf<CalendarMonth>()
-                val numberOfSameMonth = weekDaysGroup.size roundDiv maxRowCount
-                var indexInSameMonth = 0
-                calendarMonths.addAll(weekDaysGroup.chunked(maxRowCount) { monthDays ->
-                    // Use monthDays.toList() to create a copy of the ephemeral list.
-                    CalendarMonth(currentMonth, monthDays.toList(), indexInSameMonth++, numberOfSameMonth)
-                })
-
-                months.addAll(calendarMonths)
-                if (currentMonth != endMonth) currentMonth = currentMonth.next else break
+            val generateInDates = when (inDateStyle) {
+                InDateStyle.ALL_MONTHS -> true
+                InDateStyle.FIRST_MONTH -> true
+                InDateStyle.NONE -> false
             }
 
+            val weekDaysGroup =
+                generateWeekDays(calendar, firstDayOfWeek, generateInDates, outDateStyle)
+
+            // Group rows by maxRowCount into CalendarMonth classes.
+            val calendarMonths = mutableListOf<CalendarMonth>()
+            val numberOfSameMonth = weekDaysGroup.size roundDiv maxRowCount
+            var indexInSameMonth = 0
+            calendarMonths.addAll(weekDaysGroup.chunked(maxRowCount) { monthDays ->
+                // Use monthDays.toList() to create a copy of the ephemeral list.
+                CalendarMonth(calendar, monthDays.toList(), indexInSameMonth++, numberOfSameMonth)
+            })
+
+            months.addAll(calendarMonths)
             return months
         }
 
         internal fun generateUnboundedMonths(
-            startMonth: YearMonth,
-            endMonth: YearMonth,
+            calendar: Calendar,
             firstDayOfWeek: DayOfWeek,
             maxRowCount: Int,
             inDateStyle: InDateStyle,
@@ -84,24 +78,21 @@ internal data class MonthConfig(
 
             // Generate a flat list of all days in the given month range
             val allDays = mutableListOf<CalendarDay>()
-            var currentMonth = startMonth
-            while (currentMonth <= endMonth && job.isActive) {
 
-                // If inDates are enabled with boundaries disabled,
-                // we show them on the first month only.
-                val generateInDates = when (inDateStyle) {
-                    InDateStyle.FIRST_MONTH, InDateStyle.ALL_MONTHS -> currentMonth == startMonth
-                    InDateStyle.NONE -> false
-                }
-
-                allDays.addAll(
-                    // We don't generate outDates for any month, they are added manually down below.
-                    // This is because if outDates are enabled with boundaries disabled, we show them
-                    // on the last month only.
-                    generateWeekDays(currentMonth, firstDayOfWeek, generateInDates, OutDateStyle.NONE).flatten()
-                )
-                if (currentMonth != endMonth) currentMonth = currentMonth.next else break
+            // If inDates are enabled with boundaries disabled,
+            // we show them on the first month only.
+            val generateInDates = when (inDateStyle) {
+                InDateStyle.FIRST_MONTH, InDateStyle.ALL_MONTHS -> true
+                InDateStyle.NONE -> false
             }
+
+            allDays.addAll(
+                // We don't generate outDates for any month, they are added manually down below.
+                // This is because if outDates are enabled with boundaries disabled, we show them
+                // on the last month only.
+                generateWeekDays(calendar, firstDayOfWeek, generateInDates, OutDateStyle.NONE).flatten()
+            )
+
 
             // Regroup data into 7 days. Use toList() to create a copy of the ephemeral list.
             val allDaysGroup = allDays.chunked(7).toList()
@@ -165,7 +156,7 @@ internal data class MonthConfig(
                 calendarMonths.add(
                     // numberOfSameMonth is the total number of all months and
                     // indexInSameMonth is basically this item's index in the entire month list.
-                    CalendarMonth(startMonth, monthWeeks, calendarMonths.size, calMonthsCount)
+                    CalendarMonth(calendar, monthWeeks, calendarMonths.size, calMonthsCount)
                 )
             }
 
@@ -176,34 +167,75 @@ internal data class MonthConfig(
          * Generates the necessary number of weeks for a [YearMonth].
          */
         internal fun generateWeekDays(
-            yearMonth: YearMonth,
+            calendar: Calendar,
             firstDayOfWeek: DayOfWeek,
             generateInDates: Boolean,
             outDateStyle: OutDateStyle
         ): List<List<CalendarDay>> {
-            val year = yearMonth.year
-            val month = yearMonth.monthValue
-
-            val thisMonthDays = (1..yearMonth.lengthOfMonth()).map {
-                CalendarDay(LocalDate.of(year, month, it), DayOwner.THIS_MONTH)
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH) + 1
+            var thisMonthDays = if (calendar is UmmalquraCalendar) {
+                (1..calendar.lengthOfMonth()).map {
+                    val cal = UmmalquraCalendar()
+                    cal.set(UmmalquraCalendar.DAY_OF_MONTH, it)
+                    Log.e("day ${ cal.get(UmmalquraCalendar.DAY_OF_MONTH)}", cal.get(UmmalquraCalendar.WEEK_OF_YEAR).toString())
+                    CalendarDay(
+                        LocalDate.of(year, month, it),
+                        DayOwner.THIS_MONTH,
+                        cal.get(UmmalquraCalendar.WEEK_OF_YEAR)
+                    )
+                }
+            } else {
+                (1..calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).map {
+                    CalendarDay(LocalDate.of(year, month, it), DayOwner.THIS_MONTH)
+                }
             }
-
             val weekDaysGroup = if (generateInDates) {
-                // Group days by week of month so we can add the in dates if necessary.
-                val weekOfMonthField = WeekFields.of(firstDayOfWeek, 1).weekOfMonth()
-                val groupByWeekOfMonth = thisMonthDays.groupBy { it.date.get(weekOfMonthField) }.values.toMutableList()
+                var groupByWeekOfMonth = mutableListOf<List<CalendarDay>>()
+                if (calendar is UmmalquraCalendar) {
+                    val map = thisMonthDays.groupBy {
+                        it.weekOfYear
+                    }
+                    groupByWeekOfMonth = map.values.toMutableList()
+                    println(map)
 
-                // Add in-dates if necessary
+                } else {
+
+                    // Group days by week of month so we can add the in dates if necessary.
+                    val weekOfMonthField = WeekFields.of(firstDayOfWeek, 1).weekOfMonth()
+                    Log.e("weekOfMonthField", weekOfMonthField.getDisplayName(Locale.getDefault()))
+                    Log.e("weekOfMonthField", weekOfMonthField.toString())
+                    Log.e("date.get", thisMonthDays[0].date.get(weekOfMonthField).toString())
+                    val map = thisMonthDays.groupBy { it.date.get(weekOfMonthField) }
+                    groupByWeekOfMonth = map.values.toMutableList()
+                    println(map)
+                    // Add in-dates if necessary
+                }
                 val firstWeek = groupByWeekOfMonth.first()
                 if (firstWeek.size < 7) {
-                    val previousMonth = yearMonth.minusMonths(1)
-                    val inDates = (1..previousMonth.lengthOfMonth()).toList()
-                        .takeLast(7 - firstWeek.size).map {
-                            CalendarDay(
-                                LocalDate.of(previousMonth.year, previousMonth.month, it),
-                                DayOwner.PREVIOUS_MONTH
-                            )
-                        }
+                    val inDates = if (calendar is UmmalquraCalendar) {
+                        val lastMonthCalender = UmmalquraCalendar()
+                        lastMonthCalender.set(UmmalquraCalendar.MONTH, calendar.get(UmmalquraCalendar.MONTH) - 1)
+                        Log.e("last month length", lastMonthCalender.lengthOfMonth().toString())
+                        (1..lastMonthCalender.lengthOfMonth()).toList()
+                            .takeLast(7 - firstWeek.size).map {
+                                CalendarDay(
+                                    LocalDate.of(calendar.get(UmmalquraCalendar.YEAR), calendar.get(UmmalquraCalendar.MONTH)+1 , it),
+                                    DayOwner.PREVIOUS_MONTH
+                                )
+                            }
+                    } else {
+                        val lastMonthCalender = Calendar.getInstance()
+                        lastMonthCalender.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1)
+                        (1..lastMonthCalender.getActualMaximum(Calendar.DAY_OF_MONTH)).toList()
+                            .takeLast(7 - firstWeek.size).map {
+                                CalendarDay(
+                                    LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1 , it),
+                                    DayOwner.PREVIOUS_MONTH
+                                )
+                            }
+                    }
+
                     groupByWeekOfMonth[0] = inDates + firstWeek
                 }
                 groupByWeekOfMonth
@@ -219,7 +251,7 @@ internal data class MonthConfig(
                     val lastWeek = weekDaysGroup.last()
                     val lastDay = lastWeek.last()
                     val outDates = (1..7 - lastWeek.size).map {
-                        CalendarDay(lastDay.date.plusDays(it.toLong()), DayOwner.NEXT_MONTH)
+                        CalendarDay(LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+2 , it), DayOwner.NEXT_MONTH)
                     }
                     weekDaysGroup[weekDaysGroup.lastIndex] = lastWeek + outDates
                 }

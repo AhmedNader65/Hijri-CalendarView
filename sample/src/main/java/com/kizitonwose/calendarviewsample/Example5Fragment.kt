@@ -99,7 +99,7 @@ class Example5Fragment : BaseFragment(R.layout.example_5_fragment), HasToolbar {
         val daysOfWeek = daysOfWeekFromLocale()
 
         val currentMonth = YearMonth.now()
-        binding.exFiveCalendar.setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
+//        binding.exFiveCalendar.setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
         binding.exFiveCalendar.scrollToMonth(currentMonth)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
@@ -156,46 +156,46 @@ class Example5Fragment : BaseFragment(R.layout.example_5_fragment), HasToolbar {
         class MonthViewContainer(view: View) : ViewContainer(view) {
             val legendLayout = Example5CalendarHeaderBinding.bind(view).legendLayout.root
         }
-        binding.exFiveCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
-            override fun create(view: View) = MonthViewContainer(view)
-            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
-                // Setup each header day text if we have not done that already.
-                if (container.legendLayout.tag == null) {
-                    container.legendLayout.tag = month.yearMonth
-                    container.legendLayout.children.map { it as TextView }.forEachIndexed { index, tv ->
-                        tv.text = daysOfWeek[index].getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
-                            .toUpperCase(Locale.ENGLISH)
-                        tv.setTextColorRes(R.color.example_5_text_grey)
-                        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
-                    }
-                    month.yearMonth
-                }
-            }
-        }
+//        binding.exFiveCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
+//            override fun create(view: View) = MonthViewContainer(view)
+//            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
+//                // Setup each header day text if we have not done that already.
+//                if (container.legendLayout.tag == null) {
+//                    container.legendLayout.tag = month.yearMonth
+//                    container.legendLayout.children.map { it as TextView }.forEachIndexed { index, tv ->
+//                        tv.text = daysOfWeek[index].getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
+//                            .toUpperCase(Locale.ENGLISH)
+//                        tv.setTextColorRes(R.color.example_5_text_grey)
+//                        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+//                    }
+//                    month.yearMonth
+//                }
+//            }
+//        }
+//
+//        binding.exFiveCalendar.monthScrollListener = { month ->
+//            val title = "${monthTitleFormatter.format(month.yearMonth)} ${month.yearMonth.year}"
+//            binding.exFiveMonthYearText.text = title
+//
+//            selectedDate?.let {
+//                // Clear selection if we scroll to a new month.
+//                selectedDate = null
+//                binding.exFiveCalendar.notifyDateChanged(it)
+//                updateAdapterForDate(null)
+//            }
+//        }
 
-        binding.exFiveCalendar.monthScrollListener = { month ->
-            val title = "${monthTitleFormatter.format(month.yearMonth)} ${month.yearMonth.year}"
-            binding.exFiveMonthYearText.text = title
-
-            selectedDate?.let {
-                // Clear selection if we scroll to a new month.
-                selectedDate = null
-                binding.exFiveCalendar.notifyDateChanged(it)
-                updateAdapterForDate(null)
-            }
-        }
-
-        binding.exFiveNextMonthImage.setOnClickListener {
-            binding.exFiveCalendar.findFirstVisibleMonth()?.let {
-                binding.exFiveCalendar.smoothScrollToMonth(it.yearMonth.next)
-            }
-        }
-
-        binding.exFivePreviousMonthImage.setOnClickListener {
-            binding.exFiveCalendar.findFirstVisibleMonth()?.let {
-                binding.exFiveCalendar.smoothScrollToMonth(it.yearMonth.previous)
-            }
-        }
+//        binding.exFiveNextMonthImage.setOnClickListener {
+//            binding.exFiveCalendar.findFirstVisibleMonth()?.let {
+//                binding.exFiveCalendar.smoothScrollToMonth(it.yearMonth.next)
+//            }
+//        }
+//
+//        binding.exFivePreviousMonthImage.setOnClickListener {
+//            binding.exFiveCalendar.findFirstVisibleMonth()?.let {
+//                binding.exFiveCalendar.smoothScrollToMonth(it.yearMonth.previous)
+//            }
+//        }
     }
 
     override fun onStart() {

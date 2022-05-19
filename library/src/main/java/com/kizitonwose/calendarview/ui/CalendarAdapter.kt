@@ -19,6 +19,7 @@ import com.kizitonwose.calendarview.utils.inflate
 import com.kizitonwose.calendarview.utils.orZero
 import java.time.LocalDate
 import java.time.YearMonth
+import java.util.*
 
 internal typealias LP = ViewGroup.LayoutParams
 
@@ -246,7 +247,7 @@ internal class CalendarAdapter(
     }
 
     internal fun getAdapterPosition(month: YearMonth): Int {
-        return months.indexOfFirst { it.yearMonth == month }
+        return months.indexOfFirst { it.calendar.get(Calendar.MONTH) +1 == month.monthValue }
     }
 
     internal fun getAdapterPosition(date: LocalDate): Int {

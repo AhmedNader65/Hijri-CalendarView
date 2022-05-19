@@ -82,7 +82,7 @@ class Example6Fragment : BaseFragment(R.layout.example_6_fragment), HasBackButto
 
         val daysOfWeek = daysOfWeekFromLocale()
         val currentMonth = YearMonth.now()
-        binding.exSixCalendar.setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
+//        binding.exSixCalendar.setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
         binding.exSixCalendar.scrollToMonth(currentMonth)
 
         class MonthViewContainer(view: View) : ViewContainer(view) {
@@ -90,20 +90,20 @@ class Example6Fragment : BaseFragment(R.layout.example_6_fragment), HasBackButto
             val textView = binding.exSixMonthText
             val legendLayout = binding.legendLayout.root
         }
-        binding.exSixCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
-            override fun create(view: View) = MonthViewContainer(view)
-            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
-                container.textView.text = titleFormatter.format(month.yearMonth)
-                // Setup each header day text if we have not done that already.
-                if (container.legendLayout.tag == null) {
-                    container.legendLayout.tag = month.yearMonth
-                    container.legendLayout.children.map { it as TextView }.forEachIndexed { index, tv ->
-                        tv.text = daysOfWeek[index].name.first().toString()
-                        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
-                        tv.setTextColorRes(R.color.example_6_black)
-                    }
-                }
-            }
-        }
+//        binding.exSixCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
+//            override fun create(view: View) = MonthViewContainer(view)
+//            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
+//                container.textView.text = titleFormatter.format(month.yearMonth)
+//                // Setup each header day text if we have not done that already.
+//                if (container.legendLayout.tag == null) {
+//                    container.legendLayout.tag = month.yearMonth
+//                    container.legendLayout.children.map { it as TextView }.forEachIndexed { index, tv ->
+//                        tv.text = daysOfWeek[index].name.first().toString()
+//                        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
+//                        tv.setTextColorRes(R.color.example_6_black)
+//                    }
+//                }
+//            }
+//        }
     }
 }

@@ -133,7 +133,7 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
         val daysOfWeek = daysOfWeekFromLocale()
         val currentMonth = YearMonth.now()
         binding.exThreeCalendar.apply {
-            setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
+//            setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
             scrollToMonth(currentMonth)
         }
 
@@ -191,34 +191,34 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
             }
         }
 
-        binding.exThreeCalendar.monthScrollListener = {
-            homeActivityToolbar.title = if (it.year == today.year) {
-                titleSameYearFormatter.format(it.yearMonth)
-            } else {
-                titleFormatter.format(it.yearMonth)
-            }
-
-            // Select the first day of the month when
-            // we scroll to a new month.
-            selectDate(it.yearMonth.atDay(1))
-        }
-
-        class MonthViewContainer(view: View) : ViewContainer(view) {
-            val legendLayout = Example3CalendarHeaderBinding.bind(view).legendLayout.root
-        }
-        binding.exThreeCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
-            override fun create(view: View) = MonthViewContainer(view)
-            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
-                // Setup each header day text if we have not done that already.
-                if (container.legendLayout.tag == null) {
-                    container.legendLayout.tag = month.yearMonth
-                    container.legendLayout.children.map { it as TextView }.forEachIndexed { index, tv ->
-                        tv.text = daysOfWeek[index].name.first().toString()
-                        tv.setTextColorRes(R.color.example_3_black)
-                    }
-                }
-            }
-        }
+//        binding.exThreeCalendar.monthScrollListener = {
+//            homeActivityToolbar.title = if (it.year == today.year) {
+//                titleSameYearFormatter.format(it.yearMonth)
+//            } else {
+//                titleFormatter.format(it.yearMonth)
+//            }
+//
+//            // Select the first day of the month when
+//            // we scroll to a new month.
+//            selectDate(it.yearMonth.atDay(1))
+//        }
+//
+//        class MonthViewContainer(view: View) : ViewContainer(view) {
+//            val legendLayout = Example3CalendarHeaderBinding.bind(view).legendLayout.root
+//        }
+//        binding.exThreeCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
+//            override fun create(view: View) = MonthViewContainer(view)
+//            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
+//                // Setup each header day text if we have not done that already.
+//                if (container.legendLayout.tag == null) {
+//                    container.legendLayout.tag = month.yearMonth
+//                    container.legendLayout.children.map { it as TextView }.forEachIndexed { index, tv ->
+//                        tv.text = daysOfWeek[index].name.first().toString()
+//                        tv.setTextColorRes(R.color.example_3_black)
+//                    }
+//                }
+//            }
+//        }
 
         binding.exThreeAddButton.setOnClickListener {
             inputDialog.show()

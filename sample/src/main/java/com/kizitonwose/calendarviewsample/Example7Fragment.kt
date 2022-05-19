@@ -97,7 +97,7 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
 
         val currentMonth = YearMonth.now()
         // Value for firstDayOfWeek does not matter since inDates and outDates are not generated.
-        binding.exSevenCalendar.setup(currentMonth, currentMonth.plusMonths(3), DayOfWeek.values().random())
+//        binding.exSevenCalendar.setup(currentMonth, currentMonth.plusMonths(3), DayOfWeek.values().random())
         binding.exSevenCalendar.scrollToDate(LocalDate.now())
     }
 }

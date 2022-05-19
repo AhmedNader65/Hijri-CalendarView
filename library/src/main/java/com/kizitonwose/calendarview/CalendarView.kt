@@ -8,6 +8,7 @@ import androidx.annotation.Px
 import androidx.core.content.withStyledAttributes
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.*
 import com.kizitonwose.calendarview.utils.Size
@@ -20,6 +21,7 @@ import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import java.util.*
 
 typealias Completion = () -> Unit
 
@@ -121,7 +123,7 @@ open class CalendarView : RecyclerView {
         set(value) {
             if (field != value) {
                 field = value
-                setup(startMonth ?: return, endMonth ?: return, firstDayOfWeek ?: return)
+                setup( firstDayOfWeek ?: return,type ?: return)
             }
         }
 
@@ -229,8 +231,10 @@ open class CalendarView : RecyclerView {
 
     private val pagerSnapHelper = CalenderPageSnapHelper()
 
+    private var calendar: Calendar? = null
     private var startMonth: YearMonth? = null
     private var endMonth: YearMonth? = null
+    private var type: TYPE? = null
     private var firstDayOfWeek: DayOfWeek? = null
 
     private var autoSize = true
@@ -420,8 +424,7 @@ open class CalendarView : RecyclerView {
                 outDateStyle,
                 inDateStyle,
                 maxRowCount,
-                startMonth ?: return,
-                endMonth ?: return,
+                calendar ?: return,
                 firstDayOfWeek ?: return,
                 hasBoundaries, Job()
             )
@@ -660,15 +663,16 @@ open class CalendarView : RecyclerView {
      * @param endMonth The last month on the calendar.
      * @param firstDayOfWeek An instance of [DayOfWeek] enum to be the first day of week.
      */
-    fun setup(startMonth: YearMonth, endMonth: YearMonth, firstDayOfWeek: DayOfWeek) {
+    fun setup(firstDayOfWeek: DayOfWeek, type: TYPE) {
         configJob?.cancel()
-        this.startMonth = startMonth
+        this.calendar = if (type == TYPE.HIJRI) UmmalquraCalendar() else Calendar.getInstance()
         this.endMonth = endMonth
+        this.type = type
         this.firstDayOfWeek = firstDayOfWeek
+
         finishSetup(
             MonthConfig(
-                outDateStyle, inDateStyle, maxRowCount, startMonth,
-                endMonth, firstDayOfWeek, hasBoundaries, Job()
+                outDateStyle, inDateStyle, maxRowCount, calendar!!, firstDayOfWeek, hasBoundaries, Job()
             )
         )
     }
@@ -688,19 +692,17 @@ open class CalendarView : RecyclerView {
      */
     @JvmOverloads
     fun setupAsync(
-        startMonth: YearMonth,
-        endMonth: YearMonth,
+        calendar: UmmalquraCalendar,
         firstDayOfWeek: DayOfWeek,
         completion: Completion? = null
     ) {
         configJob?.cancel()
-        this.startMonth = startMonth
+        this.calendar = calendar
         this.endMonth = endMonth
         this.firstDayOfWeek = firstDayOfWeek
         configJob = GlobalScope.launch {
             val monthConfig = MonthConfig(
-                outDateStyle, inDateStyle, maxRowCount, startMonth,
-                endMonth, firstDayOfWeek, hasBoundaries, job
+                outDateStyle, inDateStyle, maxRowCount, calendar, firstDayOfWeek, hasBoundaries, job
             )
             withContext(Main) {
                 finishSetup(monthConfig)
@@ -748,7 +750,7 @@ open class CalendarView : RecyclerView {
         completion: Completion? = null
     ) {
         configJob?.cancel()
-        this.startMonth = startMonth
+//        this.calendar = calendar
         this.endMonth = endMonth
         configJob = GlobalScope.launch {
             val (config, diff) = getMonthUpdateData(job)
@@ -799,8 +801,7 @@ open class CalendarView : RecyclerView {
             outDateStyle,
             inDateStyle,
             maxRowCount,
-            requireStartMonth(),
-            requireEndMonth(),
+            requireCalendar(),
             requireFirstDayOfWeek(),
             hasBoundaries,
             job
@@ -809,6 +810,10 @@ open class CalendarView : RecyclerView {
 
     private fun requireStartMonth(): YearMonth {
         return startMonth ?: throw IllegalStateException("`startMonth` is not set. Have you called `setup()`?")
+    }
+
+    private fun requireCalendar(): Calendar {
+        return calendar ?: throw IllegalStateException("`startMonth` is not set. Have you called `setup()`?")
     }
 
     private fun requireEndMonth(): YearMonth {

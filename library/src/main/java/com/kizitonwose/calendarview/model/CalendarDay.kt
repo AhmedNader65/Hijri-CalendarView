@@ -6,7 +6,7 @@ import com.kizitonwose.calendarview.utils.yearMonth
 import java.io.Serializable
 import java.time.LocalDate
 import java.time.YearMonth
-data class CalendarDay internal constructor(val date: LocalDate, val owner: DayOwner) :
+data class CalendarDay internal constructor(val date: LocalDate, val owner: DayOwner,val weekOfYear:Int=0) :
     Comparable<CalendarDay>, Serializable {
 
     val day = date.dayOfMonth
@@ -21,6 +21,9 @@ data class CalendarDay internal constructor(val date: LocalDate, val owner: DayO
 
     override fun toString(): String {
         return "CalendarDay { date =  $date, owner = $owner}"
+    }
+    fun getWeekOfTheYear(): Int {
+        return weekOfYear
     }
 
     override fun compareTo(other: CalendarDay): Int {

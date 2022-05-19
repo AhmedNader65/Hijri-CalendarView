@@ -1,20 +1,22 @@
 package com.kizitonwose.calendarview.model
 
+import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import java.io.Serializable
 import java.time.YearMonth
+import java.util.*
 
 data class CalendarMonth(
-    val yearMonth: YearMonth,
+    val calendar: Calendar,
     val weekDays: List<List<CalendarDay>>,
     internal val indexInSameMonth: Int,
     internal val numberOfSameMonth: Int
 ) : Comparable<CalendarMonth>, Serializable {
 
-    val year: Int = yearMonth.year
-    val month: Int = yearMonth.monthValue
+    val year: Int = calendar.get(Calendar.YEAR)
+    val month: Int = calendar.get(Calendar.MONTH) +1
 
     override fun hashCode(): Int {
-        return 31 * yearMonth.hashCode() +
+        return 31 * calendar.hashCode() +
             weekDays.first().first().hashCode() +
             weekDays.last().last().hashCode()
     }
@@ -24,13 +26,13 @@ data class CalendarMonth(
         if (javaClass != other?.javaClass) return false
 
         (other as CalendarMonth)
-        return yearMonth == other.yearMonth &&
+        return calendar == other.calendar &&
             weekDays.first().first() == other.weekDays.first().first() &&
             weekDays.last().last() == other.weekDays.last().last()
     }
 
     override fun compareTo(other: CalendarMonth): Int {
-        val monthResult = yearMonth.compareTo(other.yearMonth)
+        val monthResult = calendar.compareTo(other.calendar)
         if (monthResult == 0) { // Same yearMonth
             return indexInSameMonth.compareTo(other.indexInSameMonth)
         }

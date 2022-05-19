@@ -47,7 +47,7 @@ class Example2Fragment : BaseFragment(R.layout.example_2_fragment), HasToolbar, 
             }
         }
 
-        binding.exTwoCalendar.setup(YearMonth.now(), YearMonth.now().plusMonths(10), daysOfWeek.first())
+//        binding.exTwoCalendar.setup(YearMonth.now(), YearMonth.now().plusMonths(10), daysOfWeek.first())
 
         class DayViewContainer(view: View) : ViewContainer(view) {
             // Will be set when this container is bound. See the dayBinder.
@@ -107,8 +107,8 @@ class Example2Fragment : BaseFragment(R.layout.example_2_fragment), HasToolbar, 
         binding.exTwoCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
             override fun create(view: View) = MonthViewContainer(view)
             override fun bind(container: MonthViewContainer, month: CalendarMonth) {
-                @SuppressLint("SetTextI18n") // Concatenation warning for `setText` call.
-                container.textView.text = "${month.yearMonth.month.name.toLowerCase().capitalize()} ${month.year}"
+//                @SuppressLint("SetTextI18n") // Concatenation warning for `setText` call.
+//                container.textView.text = "${month.yearMonth.month.name.toLowerCase().capitalize()} ${month.year}"
             }
         }
     }
