@@ -2,7 +2,7 @@ package com.kizitonwose.calendarviewsample
 
 import android.animation.ValueAnimator
 import android.os.Bundle
-import android.util.Log
+import android.text.format.DateUtils
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
@@ -11,10 +11,7 @@ import androidx.core.animation.doOnStart
 import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
 import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
-import com.kizitonwose.calendarview.model.CalendarDay
-import com.kizitonwose.calendarview.model.DayOwner
-import com.kizitonwose.calendarview.model.InDateStyle
-import com.kizitonwose.calendarview.model.TYPE
+import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarview.utils.next
@@ -36,8 +33,7 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
 
     private lateinit var binding: Example1FragmentBinding
 
-    private val selectedDates = mutableSetOf<LocalDate>()
-    private var today = 0
+    private val selectedDates = mutableSetOf<MyLocaleDate>()
     private val monthTitleFormatter = DateTimeFormatter.ofPattern("MMMM")
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,14 +47,10 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
             }
         }
 
-//        val calendar = UmmalquraCalendar()
-        val calendar = Calendar.getInstance()
-
-        val currentMonth = YearMonth.now()
-        today = calendar.get(Calendar.DAY_OF_MONTH)
-        val startMonth = currentMonth.minusMonths(10)
-        val endMonth = currentMonth.plusMonths(10)
-        binding.exOneCalendar.setup(daysOfWeek.first(), TYPE.HIJRI)
+        val currentMonth = UmmalquraCalendar()
+        val endMonth = Calendar.getInstance()
+        endMonth.add(Calendar.MONTH, 5)
+        binding.exOneCalendar.setup(0, 5, daysOfWeek.first(), TYPE.HIJRI)
         binding.exOneCalendar.scrollToMonth(currentMonth)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
@@ -92,7 +84,7 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
                             textView.setTextColorRes(R.color.example_1_bg)
                             textView.setBackgroundResource(R.drawable.example_1_selected_bg)
                         }
-                        today == day.date.dayOfMonth -> {
+                        DateUtils.isToday(day.date.yearMonth.timeInMillis) -> {
                             textView.setTextColorRes(R.color.example_1_white)
                             textView.setBackgroundResource(R.drawable.example_1_today_bg)
                         }
@@ -115,7 +107,7 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
                     Calendar.MONTH,
                     Calendar.SHORT,
                     Locale("ar")
-                ))       // ربيع 2 ).toString()
+                ))
             } else {
                 // In week mode, we show the header a bit differently.
                 // We show indices with dates from different months since
@@ -124,15 +116,28 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
                 val firstDate = it.weekDays.first().first().date
                 val lastDate = it.weekDays.last().last().date
                 if (firstDate.yearMonth == lastDate.yearMonth) {
-                    binding.exOneYearText.text = firstDate.yearMonth.year.toString()
-                    binding.exOneMonthText.text = monthTitleFormatter.format(firstDate)
+                    binding.exOneYearText.text = firstDate.yearMonth.get(Calendar.YEAR).toString()
+                    binding.exOneMonthText.text = firstDate.yearMonth.getDisplayName(UmmalquraCalendar.MONTH, Calendar.LONG,Locale("ar"))
                 } else {
-                    binding.exOneMonthText.text =
-                        "${monthTitleFormatter.format(firstDate)} - ${monthTitleFormatter.format(lastDate)}"
-                    if (firstDate.year == lastDate.year) {
-                        binding.exOneYearText.text = firstDate.yearMonth.year.toString()
+                    val nextMonth = UmmalquraCalendar()
+                    nextMonth.set(UmmalquraCalendar.MONTH, it.month)
+                    binding.exOneMonthText.text = "${
+                        (nextMonth.getDisplayName(
+                            Calendar.MONTH,
+                            Calendar.SHORT,
+                            Locale("ar")
+                        ))
+                    } - ${
+                        (it.calendar.getDisplayName(
+                            Calendar.MONTH,
+                            Calendar.SHORT,
+                            Locale("ar")
+                        ))
+                    }"
+                    if (firstDate.yearMonth.get(Calendar.YEAR).toString() == lastDate.yearMonth.get(Calendar.YEAR).toString()) {
+                        binding.exOneYearText.text = firstDate.yearMonth.get(Calendar.YEAR).toString()
                     } else {
-                        binding.exOneYearText.text = "${firstDate.yearMonth.year} - ${lastDate.yearMonth.year}"
+                        binding.exOneYearText.text = "${firstDate.yearMonth.get(Calendar.YEAR)} - ${lastDate.yearMonth.get(Calendar.YEAR)}"
                     }
                 }
             }
@@ -193,7 +198,12 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
                         binding.exOneCalendar.scrollToMonth(firstDate.yearMonth)
                     } else {
                         // We compare the next with the last month on the calendar so we don't go over.
-                        binding.exOneCalendar.scrollToMonth(minOf(firstDate.yearMonth.next, endMonth))
+
+                        // We compare the next with the last month on the calendar so we don't go over.
+                        if (firstDate.yearMonth.time < endMonth.time)
+                            binding.exOneCalendar.scrollToMonth(firstDate.yearMonth)
+                        else
+                            binding.exOneCalendar.scrollToMonth(endMonth)
                     }
                 }
             }

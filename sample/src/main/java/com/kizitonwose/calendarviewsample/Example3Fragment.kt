@@ -134,7 +134,7 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
         val currentMonth = YearMonth.now()
         binding.exThreeCalendar.apply {
 //            setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
-            scrollToMonth(currentMonth)
+//            scrollToMonth(currentMonth)
         }
 
         if (savedInstanceState == null) {
@@ -144,52 +144,52 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
             }
         }
 
-        class DayViewContainer(view: View) : ViewContainer(view) {
-            lateinit var day: CalendarDay // Will be set when this container is bound.
-            val binding = Example3CalendarDayBinding.bind(view)
-
-            init {
-                view.setOnClickListener {
-                    if (day.owner == DayOwner.THIS_MONTH) {
-                        selectDate(day.date)
-                    }
-                }
-            }
-        }
-        binding.exThreeCalendar.dayBinder = object : DayBinder<DayViewContainer> {
-            override fun create(view: View) = DayViewContainer(view)
-            override fun bind(container: DayViewContainer, day: CalendarDay) {
-                container.day = day
-                val textView = container.binding.exThreeDayText
-                val dotView = container.binding.exThreeDotView
-
-                textView.text = day.date.dayOfMonth.toString()
-
-                if (day.owner == DayOwner.THIS_MONTH) {
-                    textView.makeVisible()
-                    when (day.date) {
-                        today -> {
-                            textView.setTextColorRes(R.color.example_3_white)
-                            textView.setBackgroundResource(R.drawable.example_3_today_bg)
-                            dotView.makeInVisible()
-                        }
-                        selectedDate -> {
-                            textView.setTextColorRes(R.color.example_3_blue)
-                            textView.setBackgroundResource(R.drawable.example_3_selected_bg)
-                            dotView.makeInVisible()
-                        }
-                        else -> {
-                            textView.setTextColorRes(R.color.example_3_black)
-                            textView.background = null
-                            dotView.isVisible = events[day.date].orEmpty().isNotEmpty()
-                        }
-                    }
-                } else {
-                    textView.makeInVisible()
-                    dotView.makeInVisible()
-                }
-            }
-        }
+//        class DayViewContainer(view: View) : ViewContainer(view) {
+//            lateinit var day: CalendarDay // Will be set when this container is bound.
+//            val binding = Example3CalendarDayBinding.bind(view)
+//
+//            init {
+//                view.setOnClickListener {
+//                    if (day.owner == DayOwner.THIS_MONTH) {
+//                        selectDate(day.date)
+//                    }
+//                }
+//            }
+//        }
+//        binding.exThreeCalendar.dayBinder = object : DayBinder<DayViewContainer> {
+//            override fun create(view: View) = DayViewContainer(view)
+//            override fun bind(container: DayViewContainer, day: CalendarDay) {
+//                container.day = day
+//                val textView = container.binding.exThreeDayText
+//                val dotView = container.binding.exThreeDotView
+//
+//                textView.text = day.date.dayOfMonth.toString()
+//
+//                if (day.owner == DayOwner.THIS_MONTH) {
+//                    textView.makeVisible()
+//                    when (day.date) {
+//                        today -> {
+//                            textView.setTextColorRes(R.color.example_3_white)
+//                            textView.setBackgroundResource(R.drawable.example_3_today_bg)
+//                            dotView.makeInVisible()
+//                        }
+//                        selectedDate -> {
+//                            textView.setTextColorRes(R.color.example_3_blue)
+//                            textView.setBackgroundResource(R.drawable.example_3_selected_bg)
+//                            dotView.makeInVisible()
+//                        }
+//                        else -> {
+//                            textView.setTextColorRes(R.color.example_3_black)
+//                            textView.background = null
+//                            dotView.isVisible = events[day.date].orEmpty().isNotEmpty()
+//                        }
+//                    }
+//                } else {
+//                    textView.makeInVisible()
+//                    dotView.makeInVisible()
+//                }
+//            }
+//        }
 
 //        binding.exThreeCalendar.monthScrollListener = {
 //            homeActivityToolbar.title = if (it.year == today.year) {
@@ -229,8 +229,8 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
         if (selectedDate != date) {
             val oldDate = selectedDate
             selectedDate = date
-            oldDate?.let { binding.exThreeCalendar.notifyDateChanged(it) }
-            binding.exThreeCalendar.notifyDateChanged(date)
+//            oldDate?.let { binding.exThreeCalendar.notifyDateChanged(it) }
+//            binding.exThreeCalendar.notifyDateChanged(date)
             updateAdapterForDate(date)
         }
     }

@@ -6,22 +6,25 @@ import com.kizitonwose.calendarview.utils.yearMonth
 import java.io.Serializable
 import java.time.LocalDate
 import java.time.YearMonth
-data class CalendarDay internal constructor(val date: LocalDate, val owner: DayOwner,val weekOfYear:Int=0) :
+import java.util.*
+
+data class CalendarDay internal constructor(val date: MyLocaleDate, val owner: DayOwner, val weekOfYear: Int = 0) :
     Comparable<CalendarDay>, Serializable {
 
     val day = date.dayOfMonth
 
     // Find the actual month on the calendar that owns this date.
-    internal val positionYearMonth: YearMonth
+    internal val positionYearMonth: Calendar
         get() = when (owner) {
             DayOwner.THIS_MONTH -> date.yearMonth
-            DayOwner.PREVIOUS_MONTH -> date.yearMonth.next
-            DayOwner.NEXT_MONTH -> date.yearMonth.previous
+            DayOwner.PREVIOUS_MONTH -> date.getPrevMonthCalendar()
+            DayOwner.NEXT_MONTH -> date.getNextMonthCalendar()
         }
 
     override fun toString(): String {
         return "CalendarDay { date =  $date, owner = $owner}"
     }
+
     fun getWeekOfTheYear(): Int {
         return weekOfYear
     }
@@ -29,7 +32,7 @@ data class CalendarDay internal constructor(val date: LocalDate, val owner: DayO
     override fun compareTo(other: CalendarDay): Int {
         throw UnsupportedOperationException(
             "Compare using the `date` parameter instead. " +
-                "Out and In dates can have the same date values as CalendarDay in another month."
+                    "Out and In dates can have the same date values as CalendarDay in another month."
         )
     }
 

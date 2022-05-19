@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.Month
 import java.time.YearMonth
 import java.util.*
 
@@ -123,7 +124,7 @@ open class CalendarView : RecyclerView {
         set(value) {
             if (field != value) {
                 field = value
-                setup( firstDayOfWeek ?: return,type ?: return)
+                setup(prevMonth ?: return, nextMonth ?: return, firstDayOfWeek ?: return, type ?: return)
             }
         }
 
@@ -231,10 +232,11 @@ open class CalendarView : RecyclerView {
 
     private val pagerSnapHelper = CalenderPageSnapHelper()
 
-    private var calendar: Calendar? = null
-    private var startMonth: YearMonth? = null
-    private var endMonth: YearMonth? = null
+    private var startCalendar: Calendar? = null
+    private var endCalendar: Calendar? = null
     private var type: TYPE? = null
+    private var prevMonth: Int? = null
+    private var nextMonth: Int? = null
     private var firstDayOfWeek: DayOfWeek? = null
 
     private var autoSize = true
@@ -424,7 +426,8 @@ open class CalendarView : RecyclerView {
                 outDateStyle,
                 inDateStyle,
                 maxRowCount,
-                calendar ?: return,
+                startCalendar ?: return,
+                endCalendar ?: return,
                 firstDayOfWeek ?: return,
                 hasBoundaries, Job()
             )
@@ -524,7 +527,7 @@ open class CalendarView : RecyclerView {
      * shows the view for the month without any animations.
      * For a smooth scrolling effect, use [smoothScrollToMonth]
      */
-    fun scrollToMonth(month: YearMonth) {
+    fun scrollToMonth(month: Calendar) {
         calendarLayoutManager.scrollToMonth(month)
     }
 
@@ -532,7 +535,7 @@ open class CalendarView : RecyclerView {
      * Scroll to a specific month on the calendar using a smooth scrolling animation.
      * Just like [scrollToMonth], but with a smooth scrolling animation.
      */
-    fun smoothScrollToMonth(month: YearMonth) {
+    fun smoothScrollToMonth(month: Calendar) {
         calendarLayoutManager.smoothScrollToMonth(month)
     }
 
@@ -551,7 +554,7 @@ open class CalendarView : RecyclerView {
      * Shortcut for [scrollToDay] with a [LocalDate] instance.
      */
     @JvmOverloads
-    fun scrollToDate(date: LocalDate, owner: DayOwner = DayOwner.THIS_MONTH) {
+    fun scrollToDate(date: MyLocaleDate, owner: DayOwner = DayOwner.THIS_MONTH) {
         scrollToDay(CalendarDay(date, owner))
     }
 
@@ -567,7 +570,7 @@ open class CalendarView : RecyclerView {
      * Shortcut for [smoothScrollToDay] with a [LocalDate] instance.
      */
     @JvmOverloads
-    fun smoothScrollToDate(date: LocalDate, owner: DayOwner = DayOwner.THIS_MONTH) {
+    fun smoothScrollToDate(date: MyLocaleDate, owner: DayOwner = DayOwner.THIS_MONTH) {
         smoothScrollToDay(CalendarDay(date, owner))
     }
 
@@ -584,7 +587,7 @@ open class CalendarView : RecyclerView {
      * Shortcut for [notifyDayChanged] with a [LocalDate] instance.
      */
     @JvmOverloads
-    fun notifyDateChanged(date: LocalDate, owner: DayOwner = DayOwner.THIS_MONTH) {
+    fun notifyDateChanged(date: MyLocaleDate, owner: DayOwner = DayOwner.THIS_MONTH) {
         notifyDayChanged(CalendarDay(date, owner))
     }
 
@@ -595,7 +598,7 @@ open class CalendarView : RecyclerView {
      * [MonthHeaderFooterBinder.bind] will be called for this month's header view if available.
      * [MonthHeaderFooterBinder.bind] will be called for this month's footer view if available.
      */
-    fun notifyMonthChanged(month: YearMonth) {
+    fun notifyMonthChanged(month: Calendar) {
         calendarAdapter.reloadMonth(month)
     }
 
@@ -663,52 +666,48 @@ open class CalendarView : RecyclerView {
      * @param endMonth The last month on the calendar.
      * @param firstDayOfWeek An instance of [DayOfWeek] enum to be the first day of week.
      */
-    fun setup(firstDayOfWeek: DayOfWeek, type: TYPE) {
+    fun setup(prevMonth: Int, nextMonth: Int, firstDayOfWeek: DayOfWeek, type: TYPE) {
         configJob?.cancel()
-        this.calendar = if (type == TYPE.HIJRI) UmmalquraCalendar() else Calendar.getInstance()
-        this.endMonth = endMonth
+
+        if (type == TYPE.HIJRI) {
+            val startCalendar = UmmalquraCalendar()
+            startCalendar.add(Calendar.MONTH, -prevMonth)
+            this.startCalendar = startCalendar
+            val endCalendar = UmmalquraCalendar()
+            if (endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth > 11) {
+                endCalendar.set(UmmalquraCalendar.YEAR, endCalendar.get(UmmalquraCalendar.YEAR) + 1)
+                val offset = (endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth )% 11
+                endCalendar.set(UmmalquraCalendar.MONTH, offset)
+            } else
+                endCalendar.set(UmmalquraCalendar.MONTH, endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth)
+//            endCalendar.add(Calendar.MONTH,  nextMonth)
+            this.endCalendar = endCalendar
+        } else {
+            val startCalendar = Calendar.getInstance()
+            startCalendar.add(Calendar.MONTH, -prevMonth)
+            this.startCalendar = startCalendar
+            val endCalendar = Calendar.getInstance()
+            endCalendar.add(Calendar.MONTH, nextMonth)
+            this.endCalendar = endCalendar
+        }
+
+        this.prevMonth = prevMonth
+        this.nextMonth = nextMonth
         this.type = type
         this.firstDayOfWeek = firstDayOfWeek
 
         finishSetup(
             MonthConfig(
-                outDateStyle, inDateStyle, maxRowCount, calendar!!, firstDayOfWeek, hasBoundaries, Job()
+                outDateStyle,
+                inDateStyle,
+                maxRowCount,
+                startCalendar!!,
+                endCalendar!!,
+                firstDayOfWeek,
+                hasBoundaries,
+                Job()
             )
         )
-    }
-
-    /**
-     * Setup the CalendarView, asynchronously.
-     * Useful if your [startMonth] and [endMonth] values are many years apart.
-     * See [updateMonthRange] and [updateMonthRangeAsync] to change the
-     * [startMonth] and [endMonth] values.
-     *
-     * Note: the setup MUST finish before any other methods can are called. To be
-     * notified when the setup is finished, provide a [completion] parameter.
-     *
-     * @param startMonth The first month on the calendar.
-     * @param endMonth The last month on the calendar.
-     * @param firstDayOfWeek An instance of [DayOfWeek] enum to be the first day of week.
-     */
-    @JvmOverloads
-    fun setupAsync(
-        calendar: UmmalquraCalendar,
-        firstDayOfWeek: DayOfWeek,
-        completion: Completion? = null
-    ) {
-        configJob?.cancel()
-        this.calendar = calendar
-        this.endMonth = endMonth
-        this.firstDayOfWeek = firstDayOfWeek
-        configJob = GlobalScope.launch {
-            val monthConfig = MonthConfig(
-                outDateStyle, inDateStyle, maxRowCount, calendar, firstDayOfWeek, hasBoundaries, job
-            )
-            withContext(Main) {
-                finishSetup(monthConfig)
-                completion?.invoke()
-            }
-        }
     }
 
     private fun finishSetup(monthConfig: MonthConfig) {
@@ -729,10 +728,13 @@ open class CalendarView : RecyclerView {
      * See [updateMonthRangeAsync] if you wish to do this asynchronously.
      */
     @JvmOverloads
-    fun updateMonthRange(startMonth: YearMonth = requireStartMonth(), endMonth: YearMonth = requireEndMonth()) {
+    fun updateMonthRange(
+        startCalendar: Calendar = requireStartCalendar(),
+        endCalendar: Calendar = requireEndCalendar()
+    ) {
         configJob?.cancel()
-        this.startMonth = startMonth
-        this.endMonth = endMonth
+        this.startCalendar = startCalendar
+        this.endCalendar = endCalendar
         val (config, diff) = getMonthUpdateData(Job())
         finishUpdateMonthRange(config, diff)
     }
@@ -745,13 +747,13 @@ open class CalendarView : RecyclerView {
      */
     @JvmOverloads
     fun updateMonthRangeAsync(
-        startMonth: YearMonth = requireStartMonth(),
-        endMonth: YearMonth = requireEndMonth(),
+        startCalendar: Calendar = requireStartCalendar(),
+        endCalendar: Calendar = requireEndCalendar(),
         completion: Completion? = null
     ) {
         configJob?.cancel()
 //        this.calendar = calendar
-        this.endMonth = endMonth
+        this.endCalendar = endCalendar
         configJob = GlobalScope.launch {
             val (config, diff) = getMonthUpdateData(job)
             withContext(Main) {
@@ -801,23 +803,20 @@ open class CalendarView : RecyclerView {
             outDateStyle,
             inDateStyle,
             maxRowCount,
-            requireCalendar(),
+            requireStartCalendar(),
+            requireEndCalendar(),
             requireFirstDayOfWeek(),
             hasBoundaries,
             job
         )
     }
 
-    private fun requireStartMonth(): YearMonth {
-        return startMonth ?: throw IllegalStateException("`startMonth` is not set. Have you called `setup()`?")
+    private fun requireStartCalendar(): Calendar {
+        return startCalendar ?: throw IllegalStateException("`startMonth` is not set. Have you called `setup()`?")
     }
 
-    private fun requireCalendar(): Calendar {
-        return calendar ?: throw IllegalStateException("`startMonth` is not set. Have you called `setup()`?")
-    }
-
-    private fun requireEndMonth(): YearMonth {
-        return endMonth ?: throw IllegalStateException("`endMonth` is not set. Have you called `setup()`?")
+    private fun requireEndCalendar(): Calendar {
+        return endCalendar ?: throw IllegalStateException("`endMonth` is not set. Have you called `setup()`?")
     }
 
     private fun requireFirstDayOfWeek(): DayOfWeek {

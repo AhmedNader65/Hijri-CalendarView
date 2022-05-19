@@ -12,6 +12,7 @@ import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.ScrollMode
 import com.kizitonwose.calendarview.utils.NO_INDEX
 import java.time.YearMonth
+import java.util.*
 
 internal class CalendarLayoutManager(private val calView: CalendarView, @RecyclerView.Orientation orientation: Int) :
     LinearLayoutManager(calView.context, orientation, false) {
@@ -22,14 +23,14 @@ internal class CalendarLayoutManager(private val calView: CalendarView, @Recycle
     private val context: Context
         get() = calView.context
 
-    fun scrollToMonth(month: YearMonth) {
+    fun scrollToMonth(month: Calendar) {
         val position = adapter.getAdapterPosition(month)
         if (position == NO_INDEX) return
         scrollToPositionWithOffset(position, 0)
         calView.post { adapter.notifyMonthScrollListenerIfNeeded() }
     }
 
-    fun smoothScrollToMonth(month: YearMonth) {
+    fun smoothScrollToMonth(month: Calendar) {
         val position = adapter.getAdapterPosition(month)
         if (position == NO_INDEX) return
         startSmoothScroll(CalendarSmoothScroller(position, null))

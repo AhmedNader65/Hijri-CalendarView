@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.CalendarMonth
 import com.kizitonwose.calendarview.model.DayOwner
+import com.kizitonwose.calendarview.model.TYPE
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
@@ -47,59 +48,59 @@ class Example2Fragment : BaseFragment(R.layout.example_2_fragment), HasToolbar, 
             }
         }
 
-//        binding.exTwoCalendar.setup(YearMonth.now(), YearMonth.now().plusMonths(10), daysOfWeek.first())
+        binding.exTwoCalendar.setup(0, 4, daysOfWeek.first(),TYPE.HIJRI)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
             // Will be set when this container is bound. See the dayBinder.
             lateinit var day: CalendarDay
             val textView = Example2CalendarDayBinding.bind(view).exTwoDayText
 
-            init {
-                textView.setOnClickListener {
-                    if (day.owner == DayOwner.THIS_MONTH) {
-                        if (selectedDate == day.date) {
-                            selectedDate = null
-                            binding.exTwoCalendar.notifyDayChanged(day)
-                        } else {
-                            val oldDate = selectedDate
-                            selectedDate = day.date
-                            binding.exTwoCalendar.notifyDateChanged(day.date)
-                            oldDate?.let { binding.exTwoCalendar.notifyDateChanged(oldDate) }
-                        }
-                        menuItem.isVisible = selectedDate != null
-                    }
-                }
-            }
+//            init {
+//                textView.setOnClickListener {
+//                    if (day.owner == DayOwner.THIS_MONTH) {
+//                        if (selectedDate == day.date) {
+//                            selectedDate = null
+//                            binding.exTwoCalendar.notifyDayChanged(day)
+//                        } else {
+//                            val oldDate = selectedDate
+//                            selectedDate = day.date
+//                            binding.exTwoCalendar.notifyDateChanged(day.date)
+//                            oldDate?.let { binding.exTwoCalendar.notifyDateChanged(oldDate) }
+//                        }
+//                        menuItem.isVisible = selectedDate != null
+//                    }
+//                }
+//            }
         }
 
-        binding.exTwoCalendar.dayBinder = object : DayBinder<DayViewContainer> {
-            override fun create(view: View) = DayViewContainer(view)
-            override fun bind(container: DayViewContainer, day: CalendarDay) {
-                container.day = day
-                val textView = container.textView
-                textView.text = day.date.dayOfMonth.toString()
-
-                if (day.owner == DayOwner.THIS_MONTH) {
-                    textView.makeVisible()
-                    when (day.date) {
-                        selectedDate -> {
-                            textView.setTextColorRes(R.color.example_2_white)
-                            textView.setBackgroundResource(R.drawable.example_2_selected_bg)
-                        }
-                        today -> {
-                            textView.setTextColorRes(R.color.example_2_red)
-                            textView.background = null
-                        }
-                        else -> {
-                            textView.setTextColorRes(R.color.example_2_black)
-                            textView.background = null
-                        }
-                    }
-                } else {
-                    textView.makeInVisible()
-                }
-            }
-        }
+//        binding.exTwoCalendar.dayBinder = object : DayBinder<DayViewContainer> {
+//            override fun create(view: View) = DayViewContainer(view)
+//            override fun bind(container: DayViewContainer, day: CalendarDay) {
+//                container.day = day
+//                val textView = container.textView
+//                textView.text = day.date.dayOfMonth.toString()
+//
+//                if (day.owner == DayOwner.THIS_MONTH) {
+//                    textView.makeVisible()
+//                    when (day.date) {
+//                        selectedDate -> {
+//                            textView.setTextColorRes(R.color.example_2_white)
+//                            textView.setBackgroundResource(R.drawable.example_2_selected_bg)
+//                        }
+//                        today -> {
+//                            textView.setTextColorRes(R.color.example_2_red)
+//                            textView.background = null
+//                        }
+//                        else -> {
+//                            textView.setTextColorRes(R.color.example_2_black)
+//                            textView.background = null
+//                        }
+//                    }
+//                } else {
+//                    textView.makeInVisible()
+//                }
+//            }
+//        }
 
         class MonthViewContainer(view: View) : ViewContainer(view) {
             val textView = Example2CalendarHeaderBinding.bind(view).exTwoHeaderText
@@ -107,8 +108,8 @@ class Example2Fragment : BaseFragment(R.layout.example_2_fragment), HasToolbar, 
         binding.exTwoCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
             override fun create(view: View) = MonthViewContainer(view)
             override fun bind(container: MonthViewContainer, month: CalendarMonth) {
-//                @SuppressLint("SetTextI18n") // Concatenation warning for `setText` call.
-//                container.textView.text = "${month.yearMonth.month.name.toLowerCase().capitalize()} ${month.year}"
+                @SuppressLint("SetTextI18n") // Concatenation warning for `setText` call.
+                container.textView.text = "${month.month} ${month.year}"
             }
         }
     }

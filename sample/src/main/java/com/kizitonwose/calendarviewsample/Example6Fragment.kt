@@ -83,7 +83,7 @@ class Example6Fragment : BaseFragment(R.layout.example_6_fragment), HasBackButto
         val daysOfWeek = daysOfWeekFromLocale()
         val currentMonth = YearMonth.now()
 //        binding.exSixCalendar.setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
-        binding.exSixCalendar.scrollToMonth(currentMonth)
+//        binding.exSixCalendar.scrollToMonth(currentMonth)
 
         class MonthViewContainer(view: View) : ViewContainer(view) {
             val binding = Example6CalendarHeaderBinding.bind(view)

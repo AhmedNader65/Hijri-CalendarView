@@ -100,23 +100,23 @@ class Example5Fragment : BaseFragment(R.layout.example_5_fragment), HasToolbar {
 
         val currentMonth = YearMonth.now()
 //        binding.exFiveCalendar.setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
-        binding.exFiveCalendar.scrollToMonth(currentMonth)
+//        binding.exFiveCalendar.scrollToMonth(currentMonth)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
             lateinit var day: CalendarDay // Will be set when this container is bound.
             val binding = Example5CalendarDayBinding.bind(view)
             init {
                 view.setOnClickListener {
-                    if (day.owner == DayOwner.THIS_MONTH) {
-                        if (selectedDate != day.date) {
-                            val oldDate = selectedDate
-                            selectedDate = day.date
-                            val binding = this@Example5Fragment.binding
-                            binding.exFiveCalendar.notifyDateChanged(day.date)
-                            oldDate?.let { binding.exFiveCalendar.notifyDateChanged(it) }
-                            updateAdapterForDate(day.date)
-                        }
-                    }
+//                    if (day.owner == DayOwner.THIS_MONTH) {
+//                        if (selectedDate != day.date) {
+//                            val oldDate = selectedDate
+//                            selectedDate = day.date
+//                            val binding = this@Example5Fragment.binding
+//                            binding.exFiveCalendar.notifyDateChanged(day.date)
+//                            oldDate?.let { binding.exFiveCalendar.notifyDateChanged(it) }
+//                            updateAdapterForDate(day.date)
+//                        }
+//                    }
                 }
             }
         }
@@ -135,7 +135,7 @@ class Example5Fragment : BaseFragment(R.layout.example_5_fragment), HasToolbar {
 
                 if (day.owner == DayOwner.THIS_MONTH) {
                     textView.setTextColorRes(R.color.example_5_text_grey)
-                    layout.setBackgroundResource(if (selectedDate == day.date) R.drawable.example_5_selected_bg else 0)
+//                    layout.setBackgroundResource(if (selectedDate == day.date) R.drawable.example_5_selected_bg else 0)
 
                     val flights = flights[day.date]
                     if (flights != null) {

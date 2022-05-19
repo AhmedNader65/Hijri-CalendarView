@@ -167,7 +167,7 @@ internal class CalendarAdapter(
         }
     }
 
-    fun reloadMonth(month: YearMonth) {
+    fun reloadMonth(month: Calendar) {
         notifyItemChanged(getAdapterPosition(month))
     }
 
@@ -246,11 +246,11 @@ internal class CalendarAdapter(
         }
     }
 
-    internal fun getAdapterPosition(month: YearMonth): Int {
-        return months.indexOfFirst { it.calendar.get(Calendar.MONTH) +1 == month.monthValue }
+    internal fun getAdapterPosition(month: Calendar): Int {
+        return months.indexOfFirst { it.calendar.get(Calendar.MONTH) == month.get(Calendar.MONTH) }
     }
 
-    internal fun getAdapterPosition(date: LocalDate): Int {
+    internal fun getAdapterPosition(date: MyLocaleDate): Int {
         return getAdapterPosition(CalendarDay(date, DayOwner.THIS_MONTH))
     }
 

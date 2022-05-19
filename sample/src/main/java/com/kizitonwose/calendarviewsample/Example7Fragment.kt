@@ -64,29 +64,29 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
                         // We scroll to 4 days ago because we show max of five days on the screen
                         // so scrolling to 4 days ago brings the clicked date into full visibility
                         // at the end of the calendar view.
-                        binding.exSevenCalendar.smoothScrollToDate(day.date.minusDays(4))
+//                        binding.exSevenCalendar.smoothScrollToDate(day.date.minusDays(4))
                     }
 
                     // Example: If you want the clicked date to always be centered on the screen,
                     // you would use: exSevenCalendar.smoothScrollToDate(day.date.minusDays(2))
 
-                    if (selectedDate != day.date) {
-                        val oldDate = selectedDate
-                        selectedDate = day.date
-                        binding.exSevenCalendar.notifyDateChanged(day.date)
-                        oldDate?.let { binding.exSevenCalendar.notifyDateChanged(it) }
-                    }
+//                    if (selectedDate != day.date) {
+//                        val oldDate = selectedDate
+//                        selectedDate = day.date
+//                        binding.exSevenCalendar.notifyDateChanged(day.date)
+//                        oldDate?.let { binding.exSevenCalendar.notifyDateChanged(it) }
+//                    }
                 }
             }
 
             fun bind(day: CalendarDay) {
                 this.day = day
-                bind.exSevenDateText.text = dateFormatter.format(day.date)
-                bind.exSevenDayText.text = dayFormatter.format(day.date)
-                bind.exSevenMonthText.text = monthFormatter.format(day.date)
-
-                bind.exSevenDateText.setTextColor(view.context.getColorCompat(if (day.date == selectedDate) R.color.example_7_yellow else R.color.example_7_white))
-                bind.exSevenSelectedView.isVisible = day.date == selectedDate
+//                bind.exSevenDateText.text = dateFormatter.format(day.date)
+//                bind.exSevenDayText.text = dayFormatter.format(day.date)
+//                bind.exSevenMonthText.text = monthFormatter.format(day.date)
+//
+//                bind.exSevenDateText.setTextColor(view.context.getColorCompat(if (day.date == selectedDate) R.color.example_7_yellow else R.color.example_7_white))
+//                bind.exSevenSelectedView.isVisible = day.date == selectedDate
             }
         }
 
@@ -98,6 +98,6 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
         val currentMonth = YearMonth.now()
         // Value for firstDayOfWeek does not matter since inDates and outDates are not generated.
 //        binding.exSevenCalendar.setup(currentMonth, currentMonth.plusMonths(3), DayOfWeek.values().random())
-        binding.exSevenCalendar.scrollToDate(LocalDate.now())
+//        binding.exSevenCalendar.scrollToDate(LocalDate.now())
     }
 }
