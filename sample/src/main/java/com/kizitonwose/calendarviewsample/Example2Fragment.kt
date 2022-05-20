@@ -2,6 +2,7 @@ package com.kizitonwose.calendarviewsample
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -10,19 +11,16 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.children
 import com.google.android.material.snackbar.Snackbar
-import com.kizitonwose.calendarview.model.CalendarDay
-import com.kizitonwose.calendarview.model.CalendarMonth
-import com.kizitonwose.calendarview.model.DayOwner
-import com.kizitonwose.calendarview.model.TYPE
+import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarviewsample.databinding.Example2CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example2CalendarHeaderBinding
 import com.kizitonwose.calendarviewsample.databinding.Example2FragmentBinding
+import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.YearMonth
-import java.time.format.DateTimeFormatter
+import java.util.*
 
 class Example2Fragment : BaseFragment(R.layout.example_2_fragment), HasToolbar, HasBackButton {
 
@@ -33,7 +31,7 @@ class Example2Fragment : BaseFragment(R.layout.example_2_fragment), HasToolbar, 
 
     private lateinit var binding: Example2FragmentBinding
 
-    private var selectedDate: LocalDate? = null
+    private var selectedDate: MyLocaleDate? = null
     private val today = LocalDate.now()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,7 +46,7 @@ class Example2Fragment : BaseFragment(R.layout.example_2_fragment), HasToolbar, 
             }
         }
 
-        binding.exTwoCalendar.setup(0, 4, daysOfWeek.first(),TYPE.HIJRI)
+        binding.exTwoCalendar.setup(0, 4, daysOfWeek.first(), TYPE.HIJRI)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
             // Will be set when this container is bound. See the dayBinder.
@@ -87,13 +85,14 @@ class Example2Fragment : BaseFragment(R.layout.example_2_fragment), HasToolbar, 
                             textView.setTextColorRes(R.color.example_2_white)
                             textView.setBackgroundResource(R.drawable.example_2_selected_bg)
                         }
-                        today -> {
-                            textView.setTextColorRes(R.color.example_2_red)
-                            textView.background = null
-                        }
                         else -> {
-                            textView.setTextColorRes(R.color.example_2_black)
-                            textView.background = null
+                            if (DateUtils.isToday(day.date.yearMonth.timeInMillis)) {
+                                textView.setTextColorRes(R.color.example_2_red)
+                                textView.background = null
+                            } else {
+                                textView.setTextColorRes(R.color.example_2_black)
+                                textView.background = null
+                            }
                         }
                     }
                 } else {
@@ -122,8 +121,11 @@ class Example2Fragment : BaseFragment(R.layout.example_2_fragment), HasToolbar, 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menuItemDone) {
+            val ar = Locale("ar")
+
             val date = selectedDate ?: return false
-            val text = "Selected: ${DateTimeFormatter.ofPattern("d MMMM yyyy").format(date)}"
+            val text = "Selected: ${date.yearMonth.get(Calendar.YEAR)} ${date.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)} ${date.yearMonth.get(Calendar.DAY_OF_MONTH)} "
+
             Snackbar.make(requireView(), text, Snackbar.LENGTH_SHORT).show()
             fragmentManager?.popBackStack()
             return true

@@ -230,18 +230,24 @@ internal data class MonthConfig(
             val month = calendar.get(Calendar.MONTH) + 1
             var thisMonthDays = if (calendar is UmmalquraCalendar) {
                 (1..calendar.lengthOfMonth()).map {
-//                    val cal = UmmalquraCalendar()
-                    calendar.set(UmmalquraCalendar.DAY_OF_MONTH, it)
+                    val cal = UmmalquraCalendar()
+                    cal.set(UmmalquraCalendar.YEAR, calendar.get(UmmalquraCalendar.YEAR))
+                    cal.set(UmmalquraCalendar.MONTH, calendar.get(UmmalquraCalendar.MONTH))
+                    cal.set(UmmalquraCalendar.DAY_OF_MONTH, it)
                     CalendarDay(
-                        MyLocaleDate(it, calendar),
+                        MyLocaleDate(it, cal),
 //                        LocalDate.of(year, month, it),
                         DayOwner.THIS_MONTH,
-                        calendar.get(UmmalquraCalendar.WEEK_OF_YEAR)
+                        cal.get(UmmalquraCalendar.WEEK_OF_YEAR)
                     )
                 }
             } else {
                 (1..calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).map {
-                    CalendarDay(MyLocaleDate(it, calendar), DayOwner.THIS_MONTH)
+                    val cal = Calendar.getInstance()
+                    cal.set(Calendar.YEAR, calendar.get(UmmalquraCalendar.YEAR))
+                    cal.set(Calendar.MONTH, calendar.get(UmmalquraCalendar.MONTH))
+                    cal.set(Calendar.DAY_OF_MONTH, it)
+                    CalendarDay(MyLocaleDate(it, cal), DayOwner.THIS_MONTH,cal.get(UmmalquraCalendar.WEEK_OF_YEAR))
                 }
             }
             val weekDaysGroup = if (generateInDates) {
