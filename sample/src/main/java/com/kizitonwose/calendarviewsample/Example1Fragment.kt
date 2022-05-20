@@ -3,6 +3,7 @@ package com.kizitonwose.calendarviewsample
 import android.animation.ValueAnimator
 import android.os.Bundle
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
@@ -60,6 +61,7 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
 
             init {
                 view.setOnClickListener {
+                    Log.e("clicked day","${day.date.yearMonth.get(Calendar.YEAR)} - ${day.date.yearMonth.get(Calendar.MONTH)} - ${day.date.yearMonth.get(Calendar.DAY_OF_MONTH)} ")
                     if (day.owner == DayOwner.THIS_MONTH) {
                         if (selectedDates.contains(day.date)) {
                             selectedDates.remove(day.date)

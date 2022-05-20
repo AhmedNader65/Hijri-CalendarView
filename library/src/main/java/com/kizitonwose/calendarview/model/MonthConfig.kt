@@ -2,13 +2,11 @@ package com.kizitonwose.calendarview.model
 
 import android.util.Log
 import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
-import com.kizitonwose.calendarview.utils.next
 import kotlinx.coroutines.Job
 import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.YearMonth
-import java.time.temporal.WeekFields
 import java.util.*
+
 
 internal data class MonthConfig(
     internal val outDateStyle: OutDateStyle,
@@ -72,22 +70,24 @@ internal data class MonthConfig(
                     InDateStyle.NONE -> false
                 }
 
-                val weekDaysGroup =
-                    generateWeekDays(currentCalendar, firstDayOfWeek, generateInDates, outDateStyle)
-
-                // Group rows by maxRowCount into CalendarMonth classes.
-                val calendarMonths = mutableListOf<CalendarMonth>()
-                val numberOfSameMonth = weekDaysGroup.size roundDiv maxRowCount
-                var indexInSameMonth = 0
                 val cal = if (currentCalendar is UmmalquraCalendar) {
                     UmmalquraCalendar()
                 } else {
                     Calendar.getInstance()
                 }
-                cal.set(Calendar.MONTH,currentCalendar.get(Calendar.MONTH))
-                cal.set(Calendar.YEAR,currentCalendar.get(Calendar.YEAR))
-                cal.set(Calendar.DAY_OF_MONTH,currentCalendar.get(Calendar.DAY_OF_MONTH))
-                calendarMonths.addAll(weekDaysGroup.chunked(maxRowCount) { monthDays ->
+                cal.set(Calendar.MONTH, currentCalendar.get(Calendar.MONTH))
+                cal.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR))
+                cal.set(Calendar.DAY_OF_MONTH, currentCalendar.get(Calendar.DAY_OF_MONTH))
+                val weekDaysGroup =
+                    generateWeekDays(cal, firstDayOfWeek, generateInDates, outDateStyle)
+
+                val cloneGroup = weekDaysGroup.map { it.map { it.copy() } }
+                // Group rows by maxRowCount into CalendarMonth classes.
+                val calendarMonths = mutableListOf<CalendarMonth>()
+                val numberOfSameMonth = cloneGroup.size roundDiv maxRowCount
+                var indexInSameMonth = 0
+
+                calendarMonths.addAll(cloneGroup.chunked(maxRowCount) { monthDays ->
                     // Use monthDays.toList() to create a copy of the ephemeral list.
                     CalendarMonth(
                         cal,
@@ -106,6 +106,7 @@ internal data class MonthConfig(
                         currentCalendar.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR) + 1)
                     } else
                         nextMonth = month + 1
+                    currentCalendar.set(UmmalquraCalendar.DAY_OF_MONTH, 1)
                     currentCalendar.set(UmmalquraCalendar.MONTH, nextMonth)
                 } else break
             }
@@ -229,17 +230,13 @@ internal data class MonthConfig(
             val month = calendar.get(Calendar.MONTH) + 1
             var thisMonthDays = if (calendar is UmmalquraCalendar) {
                 (1..calendar.lengthOfMonth()).map {
-                    val cal = UmmalquraCalendar()
-                    cal.set(UmmalquraCalendar.DAY_OF_MONTH, it)
-                    Log.e(
-                        "day ${cal.get(UmmalquraCalendar.DAY_OF_MONTH)}",
-                        cal.get(UmmalquraCalendar.WEEK_OF_YEAR).toString()
-                    )
+//                    val cal = UmmalquraCalendar()
+                    calendar.set(UmmalquraCalendar.DAY_OF_MONTH, it)
                     CalendarDay(
-                        MyLocaleDate(it, cal),
+                        MyLocaleDate(it, calendar),
 //                        LocalDate.of(year, month, it),
                         DayOwner.THIS_MONTH,
-                        cal.get(UmmalquraCalendar.WEEK_OF_YEAR)
+                        calendar.get(UmmalquraCalendar.WEEK_OF_YEAR)
                     )
                 }
             } else {

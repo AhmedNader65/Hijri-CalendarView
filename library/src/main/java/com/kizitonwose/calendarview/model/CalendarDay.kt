@@ -1,11 +1,6 @@
 package com.kizitonwose.calendarview.model
 
-import com.kizitonwose.calendarview.utils.next
-import com.kizitonwose.calendarview.utils.previous
-import com.kizitonwose.calendarview.utils.yearMonth
 import java.io.Serializable
-import java.time.LocalDate
-import java.time.YearMonth
 import java.util.*
 
 data class CalendarDay internal constructor(val date: MyLocaleDate, val owner: DayOwner, val weekOfYear: Int = 0) :
