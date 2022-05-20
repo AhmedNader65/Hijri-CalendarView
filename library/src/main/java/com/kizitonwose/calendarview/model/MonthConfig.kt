@@ -79,10 +79,18 @@ internal data class MonthConfig(
                 val calendarMonths = mutableListOf<CalendarMonth>()
                 val numberOfSameMonth = weekDaysGroup.size roundDiv maxRowCount
                 var indexInSameMonth = 0
+                val cal = if (currentCalendar is UmmalquraCalendar) {
+                    UmmalquraCalendar()
+                } else {
+                    Calendar.getInstance()
+                }
+                cal.set(Calendar.MONTH,currentCalendar.get(Calendar.MONTH))
+                cal.set(Calendar.YEAR,currentCalendar.get(Calendar.YEAR))
+                cal.set(Calendar.DAY_OF_MONTH,currentCalendar.get(Calendar.DAY_OF_MONTH))
                 calendarMonths.addAll(weekDaysGroup.chunked(maxRowCount) { monthDays ->
                     // Use monthDays.toList() to create a copy of the ephemeral list.
                     CalendarMonth(
-                        currentCalendar.clone() as Calendar,
+                        cal,
                         monthDays.toList(),
                         indexInSameMonth++,
                         numberOfSameMonth
