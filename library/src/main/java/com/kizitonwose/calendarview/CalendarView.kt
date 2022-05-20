@@ -671,7 +671,13 @@ open class CalendarView : RecyclerView {
 
         if (type == TYPE.HIJRI) {
             val startCalendar = UmmalquraCalendar()
-            startCalendar.add(Calendar.MONTH, -prevMonth)
+            if (startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth <0) {
+                startCalendar.set(UmmalquraCalendar.YEAR, startCalendar.get(UmmalquraCalendar.YEAR) - 1)
+                val offset = (startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth )+ 12
+                startCalendar.set(UmmalquraCalendar.MONTH, offset)
+            } else
+                startCalendar.set(UmmalquraCalendar.MONTH, startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth)
+//
             this.startCalendar = startCalendar
             val endCalendar = UmmalquraCalendar()
             if (endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth > 11) {

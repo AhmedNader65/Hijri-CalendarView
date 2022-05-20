@@ -1,6 +1,7 @@
 package com.kizitonwose.calendarviewsample
 
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -16,10 +17,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kizitonwose.calendarview.model.CalendarDay
-import com.kizitonwose.calendarview.model.CalendarMonth
-import com.kizitonwose.calendarview.model.DayOwner
-import com.kizitonwose.calendarview.model.TYPE
+import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
+import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
@@ -27,12 +26,9 @@ import com.kizitonwose.calendarviewsample.databinding.Example3CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example3CalendarHeaderBinding
 import com.kizitonwose.calendarviewsample.databinding.Example3EventItemViewBinding
 import com.kizitonwose.calendarviewsample.databinding.Example3FragmentBinding
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 import java.util.*
 
-data class Event(val id: String, val text: String, val date: LocalDate)
+data class Event(val id: String, val text: String, val date: MyLocaleDate)
 
 class Example3EventsAdapter(val onClick: (Event) -> Unit) :
     RecyclerView.Adapter<Example3EventsAdapter.Example3EventsViewHolder>() {
@@ -112,13 +108,13 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
 
     override val titleRes: Int = R.string.example_3_title
 
-    private var selectedDate: LocalDate? = null
-    private val today = LocalDate.now()
+    private var selectedDate: MyLocaleDate? = null
 
-    private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM")
-    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
-    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
-    private val events = mutableMapOf<LocalDate, List<Event>>()
+    //
+//    private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM")
+//    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
+//    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
+    private val events = mutableMapOf<MyLocaleDate, List<Event>>()
 
     private lateinit var binding: Example3FragmentBinding
 
@@ -132,16 +128,16 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
         }
 
         val daysOfWeek = daysOfWeekFromLocale()
-        val currentMonth = YearMonth.now()
+        val currentMonth = UmmalquraCalendar()
         binding.exThreeCalendar.apply {
-            setup(10, 10, daysOfWeek.first(),TYPE.HIJRI)
+            setup(10, 10, daysOfWeek.first(), TYPE.HIJRI)
             scrollToMonth(currentMonth)
         }
 
         if (savedInstanceState == null) {
             binding.exThreeCalendar.post {
                 // Show today's events initially.
-                selectDate(today)
+                selectDate(MyLocaleDate(20, UmmalquraCalendar()))
             }
         }
 
@@ -169,20 +165,21 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
                 if (day.owner == DayOwner.THIS_MONTH) {
                     textView.makeVisible()
                     when (day.date) {
-                        today -> {
-                            textView.setTextColorRes(R.color.example_3_white)
-                            textView.setBackgroundResource(R.drawable.example_3_today_bg)
-                            dotView.makeInVisible()
-                        }
                         selectedDate -> {
                             textView.setTextColorRes(R.color.example_3_blue)
                             textView.setBackgroundResource(R.drawable.example_3_selected_bg)
                             dotView.makeInVisible()
                         }
                         else -> {
-                            textView.setTextColorRes(R.color.example_3_black)
-                            textView.background = null
-                            dotView.isVisible = events[day.date].orEmpty().isNotEmpty()
+                            if (DateUtils.isToday(day.date.yearMonth.timeInMillis)) {
+                                textView.setTextColorRes(R.color.example_3_white)
+                                textView.setBackgroundResource(R.drawable.example_3_today_bg)
+                                dotView.makeInVisible()
+                            } else {
+                                textView.setTextColorRes(R.color.example_3_black)
+                                textView.background = null
+                                dotView.isVisible = events[day.date].orEmpty().isNotEmpty()
+                            }
                         }
                     }
                 } else {
@@ -192,16 +189,21 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
             }
         }
 
+//    private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM")
+//    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
+//    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
         binding.exThreeCalendar.monthScrollListener = {
-            homeActivityToolbar.title = if (it.year == today.year) {
-                titleSameYearFormatter.format(it.yearMonth)
+            val ar = Locale("ar")
+            homeActivityToolbar.title = if (it.year == UmmalquraCalendar().get(Calendar.YEAR)) {
+                val ar = Locale("ar")
+                "${it.calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)}}"
             } else {
-                titleFormatter.format(it.yearMonth)
+                "${it.calendar.get(Calendar.YEAR)} ${it.calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)}}"
             }
 
             // Select the first day of the month when
             // we scroll to a new month.
-            selectDate(it.yearMonth.atDay(1))
+            selectDate(it.weekDays[0][0].date)
         }
 
         class MonthViewContainer(view: View) : ViewContainer(view) {
@@ -212,7 +214,7 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
             override fun bind(container: MonthViewContainer, month: CalendarMonth) {
                 // Setup each header day text if we have not done that already.
                 if (container.legendLayout.tag == null) {
-                    container.legendLayout.tag = month.yearMonth
+                    container.legendLayout.tag = month.calendar
                     container.legendLayout.children.map { it as TextView }.forEachIndexed { index, tv ->
                         tv.text = daysOfWeek[index].name.first().toString()
                         tv.setTextColorRes(R.color.example_3_black)
@@ -226,7 +228,7 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
         }
     }
 
-    private fun selectDate(date: LocalDate) {
+    private fun selectDate(date: MyLocaleDate) {
         if (selectedDate != date) {
             val oldDate = selectedDate
             selectedDate = date
@@ -253,13 +255,15 @@ class Example3Fragment : BaseFragment(R.layout.example_3_fragment), HasBackButto
         updateAdapterForDate(date)
     }
 
-    private fun updateAdapterForDate(date: LocalDate) {
+    private fun updateAdapterForDate(date: MyLocaleDate) {
         eventsAdapter.apply {
             events.clear()
             events.addAll(this@Example3Fragment.events[date].orEmpty())
             notifyDataSetChanged()
         }
-        binding.exThreeSelectedDateText.text = selectionFormatter.format(date)
+        val ar = Locale("ar")
+
+        binding.exThreeSelectedDateText.text = "${date.yearMonth.get(Calendar.YEAR)} ${date.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)} ${date.yearMonth.get(Calendar.DAY_OF_MONTH)}"
     }
 
     override fun onStart() {
