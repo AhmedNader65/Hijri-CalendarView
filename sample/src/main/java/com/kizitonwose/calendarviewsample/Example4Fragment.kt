@@ -5,6 +5,7 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuInflater
@@ -13,10 +14,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.children
+import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import com.google.android.material.snackbar.Snackbar
-import com.kizitonwose.calendarview.model.CalendarDay
-import com.kizitonwose.calendarview.model.CalendarMonth
-import com.kizitonwose.calendarview.model.DayOwner
+import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
@@ -39,8 +39,8 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
 
     private val today = LocalDate.now()
 
-    private var startDate: LocalDate? = null
-    private var endDate: LocalDate? = null
+    private var startDate: MyLocaleDate? = null
+    private var endDate: MyLocaleDate? = null
 
     private val headerDateFormatter = DateTimeFormatter.ofPattern("EEE'\n'd MMM")
 
@@ -77,112 +77,116 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
             }
         }
 
-        val currentMonth = YearMonth.now()
-//        binding.exFourCalendar.setup(currentMonth, currentMonth.plusMonths(12), daysOfWeek.first())
-//        binding.exFourCalendar.scrollToMonth(currentMonth)
-//
-//        class DayViewContainer(view: View) : ViewContainer(view) {
-//            lateinit var day: CalendarDay // Will be set when this container is bound.
-//            val binding = Example4CalendarDayBinding.bind(view)
-//
-//            init {
-//                view.setOnClickListener {
-//                    if (day.owner == DayOwner.THIS_MONTH && (day.date == today || day.date.isAfter(today))) {
-//                        val date = day.date
-//                        if (startDate != null) {
-//                            if (date < startDate || endDate != null) {
-//                                startDate = date
-//                                endDate = null
-//                            } else if (date != startDate) {
-//                                endDate = date
-//                            }
-//                        } else {
-//                            startDate = date
-//                        }
-//                        this@Example4Fragment.binding.exFourCalendar.notifyCalendarChanged()
-//                        bindSummaryViews()
-//                    }
-//                }
-//            }
-//        }
-//
-//        binding.exFourCalendar.dayBinder = object : DayBinder<DayViewContainer> {
-//            override fun create(view: View) = DayViewContainer(view)
-//            override fun bind(container: DayViewContainer, day: CalendarDay) {
-//                container.day = day
-//                val textView = container.binding.exFourDayText
-//                val roundBgView = container.binding.exFourRoundBgView
-//
-//                textView.text = null
-//                textView.background = null
-//                roundBgView.makeInVisible()
-//
-//                val startDate = startDate
-//                val endDate = endDate
-//
-//                when (day.owner) {
-//                    DayOwner.THIS_MONTH -> {
-//                        textView.text = day.day.toString()
-//                        if (day.date.isBefore(today)) {
-//                            textView.setTextColorRes(R.color.example_4_grey_past)
-//                        } else {
-//                            when {
-//                                startDate == day.date && endDate == null -> {
-//                                    textView.setTextColorRes(R.color.white)
-//                                    roundBgView.makeVisible()
-//                                    roundBgView.setBackgroundResource(R.drawable.example_4_single_selected_bg)
-//                                }
-//                                day.date == startDate -> {
-//                                    textView.setTextColorRes(R.color.white)
-//                                    textView.background = startBackground
-//                                }
-//                                startDate != null && endDate != null && (day.date > startDate && day.date < endDate) -> {
-//                                    textView.setTextColorRes(R.color.white)
-//                                    textView.setBackgroundResource(R.drawable.example_4_continuous_selected_bg_middle)
-//                                }
-//                                day.date == endDate -> {
-//                                    textView.setTextColorRes(R.color.white)
-//                                    textView.background = endBackground
-//                                }
-//                                day.date == today -> {
-//                                    textView.setTextColorRes(R.color.example_4_grey)
-//                                    roundBgView.makeVisible()
-//                                    roundBgView.setBackgroundResource(R.drawable.example_4_today_bg)
-//                                }
-//                                else -> textView.setTextColorRes(R.color.example_4_grey)
-//                            }
-//                        }
-//                    }
-//                    // Make the coloured selection background continuous on the invisible in and out dates across various months.
-//                    DayOwner.PREVIOUS_MONTH ->
-//                        if (startDate != null && endDate != null && isInDateBetween(day.date, startDate, endDate)) {
-//                            textView.setBackgroundResource(R.drawable.example_4_continuous_selected_bg_middle)
-//                        }
-//                    DayOwner.NEXT_MONTH ->
-//                        if (startDate != null && endDate != null && isOutDateBetween(day.date, startDate, endDate)) {
-//                            textView.setBackgroundResource(R.drawable.example_4_continuous_selected_bg_middle)
-//                        }
-//                }
-//            }
-//        }
+        val currentMonth = UmmalquraCalendar()
+        binding.exFourCalendar.setup(10, 10, daysOfWeek.first(),TYPE.HIJRI)
+        binding.exFourCalendar.scrollToMonth(currentMonth)
+
+        class DayViewContainer(view: View) : ViewContainer(view) {
+            lateinit var day: CalendarDay // Will be set when this container is bound.
+            val binding = Example4CalendarDayBinding.bind(view)
+
+            init {
+                view.setOnClickListener {
+                    if (day.owner == DayOwner.THIS_MONTH && ( DateUtils.isToday(day.date.yearMonth.timeInMillis) || day.date.yearMonth.timeInMillis > System.currentTimeMillis())) {
+                        val date = day.date
+                        if (startDate != null) {
+                            if (date.yearMonth.timeInMillis < startDate!!.yearMonth.timeInMillis || endDate != null) {
+                                startDate = date
+                                endDate = null
+                            } else if (date != startDate) {
+                                endDate = date
+                            }
+                        } else {
+                            startDate = date
+                        }
+                        this@Example4Fragment.binding.exFourCalendar.notifyCalendarChanged()
+                        bindSummaryViews()
+                    }
+                }
+            }
+        }
+
+        binding.exFourCalendar.dayBinder = object : DayBinder<DayViewContainer> {
+            override fun create(view: View) = DayViewContainer(view)
+            override fun bind(container: DayViewContainer, day: CalendarDay) {
+                container.day = day
+                val textView = container.binding.exFourDayText
+                val roundBgView = container.binding.exFourRoundBgView
+
+                textView.text = null
+                textView.background = null
+                roundBgView.makeInVisible()
+
+                val startDate = startDate
+                val endDate = endDate
+
+                when (day.owner) {
+                    DayOwner.THIS_MONTH -> {
+                        textView.text = day.day.toString()
+                        if (day.date.yearMonth.timeInMillis < System.currentTimeMillis()) {
+                            textView.setTextColorRes(R.color.example_4_grey_past)
+                        } else {
+                            when {
+                                startDate == day.date && endDate == null -> {
+                                    textView.setTextColorRes(R.color.white)
+                                    roundBgView.makeVisible()
+                                    roundBgView.setBackgroundResource(R.drawable.example_4_single_selected_bg)
+                                }
+                                day.date == startDate -> {
+                                    textView.setTextColorRes(R.color.white)
+                                    textView.background = startBackground
+                                }
+                                startDate != null && endDate != null && (day.date.yearMonth.timeInMillis > startDate.yearMonth.timeInMillis && day.date.yearMonth.timeInMillis < endDate.yearMonth.timeInMillis) -> {
+                                    textView.setTextColorRes(R.color.white)
+                                    textView.setBackgroundResource(R.drawable.example_4_continuous_selected_bg_middle)
+                                }
+                                day.date == endDate -> {
+                                    textView.setTextColorRes(R.color.white)
+                                    textView.background = endBackground
+                                }
+                                DateUtils.isToday(day.date.yearMonth.timeInMillis)-> {
+                                    textView.setTextColorRes(R.color.example_4_grey)
+                                    roundBgView.makeVisible()
+                                    roundBgView.setBackgroundResource(R.drawable.example_4_today_bg)
+                                }
+                                else -> textView.setTextColorRes(R.color.example_4_grey)
+                            }
+                        }
+                    }
+                    // Make the coloured selection background continuous on the invisible in and out dates across various months.
+                    DayOwner.PREVIOUS_MONTH ->
+                        if (startDate != null && endDate != null && isInDateBetween(day.date, startDate, endDate)) {
+                            textView.setBackgroundResource(R.drawable.example_4_continuous_selected_bg_middle)
+                        }
+                    DayOwner.NEXT_MONTH ->
+                        if (startDate != null && endDate != null && isOutDateBetween(day.date, startDate, endDate)) {
+                            textView.setBackgroundResource(R.drawable.example_4_continuous_selected_bg_middle)
+                        }
+                }
+            }
+        }
 
         class MonthViewContainer(view: View) : ViewContainer(view) {
             val textView = Example4CalendarHeaderBinding.bind(view).exFourHeaderText
         }
-//        binding.exFourCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
-//            override fun create(view: View) = MonthViewContainer(view)
-//            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
-//                val monthTitle = "${month.yearMonth.month.name.toLowerCase().capitalize()} ${month.year}"
-//                container.textView.text = monthTitle
-//            }
-//        }
+        binding.exFourCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
+            override fun create(view: View) = MonthViewContainer(view)
+            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
+                val ar = Locale("ar")
+                val title = "${month.calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)}"
+                val monthTitle = "$title ${month.year}"
+                container.textView.text = monthTitle
+            }
+        }
 
         binding.exFourSaveButton.setOnClickListener click@{
             val startDate = startDate
             val endDate = endDate
             if (startDate != null && endDate != null) {
-                val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-                val text = "Selected: ${formatter.format(startDate)} - ${formatter.format(endDate)}"
+                var ar = Locale("ar")
+                val text = "Selected: ${startDate.yearMonth.get(Calendar.YEAR)} ${startDate.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)} ${startDate.yearMonth.get(Calendar.DAY_OF_MONTH)} " +
+                        "- ${endDate.yearMonth.get(Calendar.YEAR)} ${endDate.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)} ${endDate.yearMonth.get(Calendar.DAY_OF_MONTH)} "
+
                 Snackbar.make(requireView(), text, Snackbar.LENGTH_LONG).show()
             } else {
                 Snackbar.make(requireView(), "No selection. Searching all Airbnb listings.", Snackbar.LENGTH_LONG)
@@ -194,24 +198,27 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
         bindSummaryViews()
     }
 
-    private fun isInDateBetween(inDate: LocalDate, startDate: LocalDate, endDate: LocalDate): Boolean {
-        if (startDate.yearMonth == endDate.yearMonth) return false
-        if (inDate.yearMonth == startDate.yearMonth) return true
-        val firstDateInThisMonth = inDate.plusMonths(1).yearMonth.atDay(1)
-        return firstDateInThisMonth >= startDate && firstDateInThisMonth <= endDate && startDate != firstDateInThisMonth
+    private fun isInDateBetween(inDate: MyLocaleDate, startDate: MyLocaleDate, endDate: MyLocaleDate): Boolean {
+        if (startDate.yearMonth.timeInMillis == endDate.yearMonth.timeInMillis) return false
+        if (inDate.yearMonth.timeInMillis == startDate.yearMonth.timeInMillis) return true
+        val firstDateInThisMonth = inDate.getNextMonthCalendar()
+        firstDateInThisMonth.set(Calendar.DAY_OF_MONTH,1)
+        return firstDateInThisMonth.timeInMillis >= startDate.yearMonth.timeInMillis && firstDateInThisMonth.timeInMillis <= endDate.yearMonth.timeInMillis && startDate.yearMonth.timeInMillis != firstDateInThisMonth.timeInMillis
     }
 
-    private fun isOutDateBetween(outDate: LocalDate, startDate: LocalDate, endDate: LocalDate): Boolean {
-        if (startDate.yearMonth == endDate.yearMonth) return false
-        if (outDate.yearMonth == endDate.yearMonth) return true
-        val lastDateInThisMonth = outDate.minusMonths(1).yearMonth.atEndOfMonth()
-        return lastDateInThisMonth >= startDate && lastDateInThisMonth <= endDate && endDate != lastDateInThisMonth
+    private fun isOutDateBetween(outDate: MyLocaleDate, startDate: MyLocaleDate, endDate: MyLocaleDate): Boolean {
+        if (startDate.yearMonth.timeInMillis == endDate.yearMonth.timeInMillis) return false
+        if (outDate.yearMonth.timeInMillis == endDate.yearMonth.timeInMillis) return true
+        val lastDateInThisMonth =  outDate.getPrevMonthCalendar()
+        lastDateInThisMonth.set(Calendar.DAY_OF_MONTH,1)
+        return lastDateInThisMonth.timeInMillis >= startDate.yearMonth.timeInMillis && lastDateInThisMonth.timeInMillis <= endDate.yearMonth.timeInMillis && endDate.yearMonth.timeInMillis != lastDateInThisMonth.timeInMillis
     }
 
     private fun bindSummaryViews() {
         binding.exFourStartDateText.apply {
             if (startDate != null) {
-                text = headerDateFormatter.format(startDate)
+                var ar = Locale("ar")
+                text = "${startDate!!.yearMonth.get(Calendar.YEAR)} ${startDate!!.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)} ${startDate!!.yearMonth.get(Calendar.DAY_OF_MONTH)} "
                 setTextColorRes(R.color.example_4_grey)
             } else {
                 text = getString(R.string.start_date)
@@ -221,7 +228,8 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
 
         binding.exFourEndDateText.apply {
             if (endDate != null) {
-                text = headerDateFormatter.format(endDate)
+                var ar = Locale("ar")
+                text = "${endDate!!.yearMonth.get(Calendar.YEAR)} ${endDate!!.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)} ${endDate!!.yearMonth.get(Calendar.DAY_OF_MONTH)} "
                 setTextColorRes(R.color.example_4_grey)
             } else {
                 text = getString(R.string.end_date)
