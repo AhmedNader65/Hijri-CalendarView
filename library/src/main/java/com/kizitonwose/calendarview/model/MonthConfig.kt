@@ -63,7 +63,10 @@ internal data class MonthConfig(
         ): List<CalendarMonth> {
             val months = mutableListOf<CalendarMonth>()
             var currentCalendar = startCalendar
-            while (currentCalendar.time <= endCalendar.time) {
+            var currentTimeInMillis = currentCalendar.timeInMillis
+            val endTimesInMillis = endCalendar.timeInMillis
+
+            while (currentTimeInMillis <= endTimesInMillis) {
                 val generateInDates = when (inDateStyle) {
                     InDateStyle.ALL_MONTHS -> true
                     InDateStyle.FIRST_MONTH -> true
@@ -98,8 +101,9 @@ internal data class MonthConfig(
                 })
 
                 months.addAll(calendarMonths)
-                if (currentCalendar.get(Calendar.MONTH) != endCalendar.get(Calendar.MONTH)) {
-                    val month = currentCalendar.get(Calendar.MONTH)
+                if(currentCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH) && currentCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR)) {
+                    break
+                } else {val month = currentCalendar.get(Calendar.MONTH)
                     var nextMonth = 0
                     if (month == 11) {
                         nextMonth = 0
@@ -108,7 +112,9 @@ internal data class MonthConfig(
                         nextMonth = month + 1
                     currentCalendar.set(UmmalquraCalendar.DAY_OF_MONTH, 1)
                     currentCalendar.set(UmmalquraCalendar.MONTH, nextMonth)
-                } else break
+
+                }
+                currentTimeInMillis = currentCalendar.timeInMillis
             }
             return months
         }
@@ -247,7 +253,7 @@ internal data class MonthConfig(
                     cal.set(Calendar.YEAR, calendar.get(UmmalquraCalendar.YEAR))
                     cal.set(Calendar.MONTH, calendar.get(UmmalquraCalendar.MONTH))
                     cal.set(Calendar.DAY_OF_MONTH, it)
-                    CalendarDay(MyLocaleDate(it, cal), DayOwner.THIS_MONTH,cal.get(UmmalquraCalendar.WEEK_OF_YEAR))
+                    CalendarDay(MyLocaleDate(it, cal), DayOwner.THIS_MONTH, cal.get(UmmalquraCalendar.WEEK_OF_YEAR))
                 }
             }
             val weekDaysGroup = if (generateInDates) {

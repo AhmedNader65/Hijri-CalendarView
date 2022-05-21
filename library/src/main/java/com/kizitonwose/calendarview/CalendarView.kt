@@ -23,6 +23,7 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
 import java.util.*
+import kotlin.math.absoluteValue
 
 typealias Completion = () -> Unit
 
@@ -671,9 +672,12 @@ open class CalendarView : RecyclerView {
 
         if (type == TYPE.HIJRI) {
             val startCalendar = UmmalquraCalendar()
-            if (startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth <0) {
-                startCalendar.set(UmmalquraCalendar.YEAR, startCalendar.get(UmmalquraCalendar.YEAR) - 1)
-                val offset = (startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth )+ 12
+            if (startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth < 0) {
+                startCalendar.set(
+                    UmmalquraCalendar.YEAR,
+                    startCalendar.get(UmmalquraCalendar.YEAR) - (((startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth).absoluteValue / 11) + 1) as Int
+                )
+                val offset = (startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth) + 12
                 startCalendar.set(UmmalquraCalendar.MONTH, offset)
             } else
                 startCalendar.set(UmmalquraCalendar.MONTH, startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth)
@@ -681,8 +685,11 @@ open class CalendarView : RecyclerView {
             this.startCalendar = startCalendar
             val endCalendar = UmmalquraCalendar()
             if (endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth > 11) {
-                endCalendar.set(UmmalquraCalendar.YEAR, endCalendar.get(UmmalquraCalendar.YEAR) + 1)
-                val offset = (endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth )% 11
+                endCalendar.set(
+                    UmmalquraCalendar.YEAR,
+                    endCalendar.get(UmmalquraCalendar.YEAR) + (endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth) / 11 as Int
+                )
+                val offset = (endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth) % 11
                 endCalendar.set(UmmalquraCalendar.MONTH, offset)
             } else
                 endCalendar.set(UmmalquraCalendar.MONTH, endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth)
