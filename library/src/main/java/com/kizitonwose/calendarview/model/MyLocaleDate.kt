@@ -11,6 +11,9 @@ data class MyLocaleDate(val dayOfMonth: Int, var yearMonth: Calendar) {
         if (yearMonth is UmmalquraCalendar) {
 
             cal = UmmalquraCalendar()
+            cal.set(UmmalquraCalendar.DAY_OF_MONTH, yearMonth.get(UmmalquraCalendar.DAY_OF_MONTH))
+            cal.set(UmmalquraCalendar.YEAR, yearMonth.get(UmmalquraCalendar.YEAR))
+            cal.set(UmmalquraCalendar.MONTH, yearMonth.get(UmmalquraCalendar.MONTH))
             if (cal.get(UmmalquraCalendar.MONTH) + 1 > 11) {
                 cal.set(UmmalquraCalendar.DAY_OF_MONTH, 1)
                 cal.set(UmmalquraCalendar.YEAR, cal.get(UmmalquraCalendar.YEAR) + 1)
@@ -34,6 +37,9 @@ data class MyLocaleDate(val dayOfMonth: Int, var yearMonth: Calendar) {
         var cal: Calendar
         if (yearMonth is UmmalquraCalendar) {
             cal =UmmalquraCalendar()
+            cal.set(UmmalquraCalendar.DAY_OF_MONTH, yearMonth.get(UmmalquraCalendar.DAY_OF_MONTH))
+            cal.set(UmmalquraCalendar.YEAR, yearMonth.get(UmmalquraCalendar.YEAR))
+            cal.set(UmmalquraCalendar.MONTH, yearMonth.get(UmmalquraCalendar.MONTH))
             if (cal.get(UmmalquraCalendar.MONTH) - 1 < 0) {
                 cal.set(UmmalquraCalendar.DAY_OF_MONTH, 1)
                 cal.set(UmmalquraCalendar.YEAR, cal.get(UmmalquraCalendar.YEAR) - 1)
