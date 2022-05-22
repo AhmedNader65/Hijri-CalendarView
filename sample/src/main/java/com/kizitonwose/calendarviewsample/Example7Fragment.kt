@@ -14,6 +14,7 @@ import com.kizitonwose.calendarview.model.TYPE
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarview.utils.Size
+import com.kizitonwose.calendarview.utils.yearMonth
 import com.kizitonwose.calendarviewsample.databinding.Example7CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example7FragmentBinding
 import java.time.DayOfWeek
@@ -29,7 +30,13 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
     override val toolbar: Toolbar?
         get() = binding.exSevenToolbar
 
+<<<<<<< HEAD
     private var selectedDate: MyLocaleDate? = null
+||||||| 7e5464a
+    private var selectedDate = LocalDate.now()
+=======
+    private var selectedDate : MyLocaleDate? =null
+>>>>>>> db9b31f1442786ad8e5b5ffdd3e60eba26a3a9fa
 
     private val dateFormatter = DateTimeFormatter.ofPattern("dd")
     private val dayFormatter = DateTimeFormatter.ofPattern("EEE")
@@ -68,7 +75,16 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
                         // We scroll to 4 days ago because we show max of five days on the screen
                         // so scrolling to 4 days ago brings the clicked date into full visibility
                         // at the end of the calendar view.
+<<<<<<< HEAD
                         binding.exSevenCalendar.smoothScrollToDate(day.date)
+||||||| 7e5464a
+//                        binding.exSevenCalendar.smoothScrollToDate(day.date.minusDays(4))
+=======
+                        val cal = day.date.yearMonth
+                        cal.add(Calendar.DAY_OF_MONTH,4)
+                        day.date.yearMonth = cal
+                        binding.exSevenCalendar.smoothScrollToDate(day.date)
+>>>>>>> db9b31f1442786ad8e5b5ffdd3e60eba26a3a9fa
                     }
 
                     // Example: If you want the clicked date to always be centered on the screen,
@@ -84,7 +100,9 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
             }
 
             fun bind(day: CalendarDay) {
+                val ar = Locale("ar")
                 this.day = day
+<<<<<<< HEAD
                 bind.exSevenDateText.text = "${day.date.yearMonth.get(Calendar.DAY_OF_MONTH)} "
                 bind.exSevenDayText.text =
                     "${day.date.yearMonth.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale("ar"))}"
@@ -93,6 +111,21 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
 
                 bind.exSevenDateText.setTextColor(view.context.getColorCompat(if (day.date == selectedDate) R.color.example_7_yellow else R.color.example_7_white))
                 bind.exSevenSelectedView.isVisible = day.date == selectedDate
+||||||| 7e5464a
+//                bind.exSevenDateText.text = dateFormatter.format(day.date)
+//                bind.exSevenDayText.text = dayFormatter.format(day.date)
+//                bind.exSevenMonthText.text = monthFormatter.format(day.date)
+//
+//                bind.exSevenDateText.setTextColor(view.context.getColorCompat(if (day.date == selectedDate) R.color.example_7_yellow else R.color.example_7_white))
+//                bind.exSevenSelectedView.isVisible = day.date == selectedDate
+=======
+                bind.exSevenDateText.text = "${day.date.yearMonth.get(Calendar.DAY_OF_MONTH)}"
+                bind.exSevenDayText.text = "${day.date.yearMonth.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, ar)}"
+                bind.exSevenMonthText.text = "${day.date.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)}"
+
+                bind.exSevenDateText.setTextColor(view.context.getColorCompat(if (day.date.yearMonth.time == selectedDate?.yearMonth?.time) R.color.example_7_yellow else R.color.example_7_white))
+                bind.exSevenSelectedView.isVisible = day.date == selectedDate
+>>>>>>> db9b31f1442786ad8e5b5ffdd3e60eba26a3a9fa
             }
         }
 
@@ -103,8 +136,17 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
 
         val currentMonth = YearMonth.now()
         // Value for firstDayOfWeek does not matter since inDates and outDates are not generated.
+<<<<<<< HEAD
         binding.exSevenCalendar.setup(0, 3, daysOfWeekFromLocale().first(), TYPE.HIJRI)
         val today = UmmalquraCalendar()
         binding.exSevenCalendar.scrollToDate(MyLocaleDate(today.get(Calendar.DAY_OF_MONTH), today))
+||||||| 7e5464a
+//        binding.exSevenCalendar.setup(currentMonth, currentMonth.plusMonths(3), DayOfWeek.values().random())
+//        binding.exSevenCalendar.scrollToDate(LocalDate.now())
+=======
+        binding.exSevenCalendar.setup(0, 3, DayOfWeek.values().random(),TYPE.HIJRI)
+        val cal = UmmalquraCalendar()
+        binding.exSevenCalendar.scrollToDate(MyLocaleDate(cal.get(UmmalquraCalendar.DAY_OF_MONTH),cal) )
+>>>>>>> db9b31f1442786ad8e5b5ffdd3e60eba26a3a9fa
     }
 }

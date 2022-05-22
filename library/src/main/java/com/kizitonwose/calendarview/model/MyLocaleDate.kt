@@ -3,7 +3,7 @@ package com.kizitonwose.calendarview.model
 import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import java.util.*
 
-data class MyLocaleDate(val dayOfMonth: Int, val yearMonth: Calendar) {
+data class MyLocaleDate(val dayOfMonth: Int, var yearMonth: Calendar) {
 
     fun getNextMonthCalendar(): Calendar {
         var cal: Calendar
