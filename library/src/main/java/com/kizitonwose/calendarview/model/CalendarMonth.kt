@@ -13,12 +13,17 @@ data class CalendarMonth(
 ) : Comparable<CalendarMonth>, Serializable {
 
     val year: Int = calendar.get(Calendar.YEAR)
-    val month: Int = calendar.get(Calendar.MONTH) +1
+    val month: Int = calendar.get(Calendar.MONTH) + 1
+    fun getNextMonth(): Calendar =
+        weekDays[2][0].date.getNextMonthCalendar()
+
+    fun getPrevMonth(): Calendar =
+        weekDays[2][0].date.getPrevMonthCalendar()
 
     override fun hashCode(): Int {
         return 31 * calendar.hashCode() +
-            weekDays.first().first().hashCode() +
-            weekDays.last().last().hashCode()
+                weekDays.first().first().hashCode() +
+                weekDays.last().last().hashCode()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -27,8 +32,8 @@ data class CalendarMonth(
 
         (other as CalendarMonth)
         return calendar == other.calendar &&
-            weekDays.first().first() == other.weekDays.first().first() &&
-            weekDays.last().last() == other.weekDays.last().last()
+                weekDays.first().first() == other.weekDays.first().first() &&
+                weekDays.last().last() == other.weekDays.last().last()
     }
 
     override fun compareTo(other: CalendarMonth): Int {
@@ -41,6 +46,6 @@ data class CalendarMonth(
 
     override fun toString(): String {
         return "CalendarMonth { first = ${weekDays.first().first()}, last = ${weekDays.last().last()}} " +
-            "indexInSameMonth = $indexInSameMonth, numberOfSameMonth = $numberOfSameMonth"
+                "indexInSameMonth = $indexInSameMonth, numberOfSameMonth = $numberOfSameMonth"
     }
 }

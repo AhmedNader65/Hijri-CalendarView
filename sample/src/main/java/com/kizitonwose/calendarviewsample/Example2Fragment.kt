@@ -18,13 +18,12 @@ import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarviewsample.databinding.Example2CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example2CalendarHeaderBinding
 import com.kizitonwose.calendarviewsample.databinding.Example2FragmentBinding
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
 
 class Example2Fragment : BaseFragment(R.layout.example_2_fragment), HasToolbar, HasBackButton {
 
-    override val toolbar: Toolbar?
+    override val toolbar: Toolbar
         get() = binding.exTwoToolbar
 
     override val titleRes: Int = R.string.example_2_title

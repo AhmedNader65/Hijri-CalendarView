@@ -16,8 +16,6 @@ import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
-import com.kizitonwose.calendarview.utils.next
-import com.kizitonwose.calendarview.utils.previous
 import com.kizitonwose.calendarviewsample.databinding.Example5CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example5CalendarHeaderBinding
 import com.kizitonwose.calendarviewsample.databinding.Example5EventItemViewBinding
@@ -96,12 +94,13 @@ class Example5Fragment : BaseFragment(R.layout.example_5_fragment), HasToolbar {
         val daysOfWeek = daysOfWeekFromLocale()
 
         val currentMonth = UmmalquraCalendar()
-        binding.exFiveCalendar.setup(10, 10, daysOfWeek.first(),TYPE.HIJRI)
+        binding.exFiveCalendar.setup(10, 10, daysOfWeek.first(), TYPE.HIJRI)
         binding.exFiveCalendar.scrollToMonth(currentMonth)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
             lateinit var day: CalendarDay // Will be set when this container is bound.
             val binding = Example5CalendarDayBinding.bind(view)
+
             init {
                 view.setOnClickListener {
                     if (day.owner == DayOwner.THIS_MONTH) {
@@ -184,13 +183,13 @@ class Example5Fragment : BaseFragment(R.layout.example_5_fragment), HasToolbar {
 
         binding.exFiveNextMonthImage.setOnClickListener {
             binding.exFiveCalendar.findFirstVisibleMonth()?.let {
-                binding.exFiveCalendar.smoothScrollToMonth(it.weekDays[2][0].date.getNextMonthCalendar())
+                binding.exFiveCalendar.smoothScrollToMonth(it.getNextMonth())
             }
         }
 
         binding.exFivePreviousMonthImage.setOnClickListener {
             binding.exFiveCalendar.findFirstVisibleMonth()?.let {
-                binding.exFiveCalendar.smoothScrollToMonth(it.weekDays[2][0].date.getPrevMonthCalendar())
+                binding.exFiveCalendar.smoothScrollToMonth(it.getPrevMonth())
             }
         }
     }

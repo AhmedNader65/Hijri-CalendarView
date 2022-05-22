@@ -179,7 +179,17 @@ internal data class MonthConfig(
                     val lastWeek = monthWeeks.last()
                     val lastDay = lastWeek.last()
                     val outDates = (1..7 - lastWeek.size).map {
-                        CalendarDay(lastDay.date.plusDay(it), DayOwner.NEXT_MONTH)
+                        val mCalendar =
+                        if (currentCalendar is UmmalquraCalendar){
+                            UmmalquraCalendar()
+                        }else{
+                            Calendar.getInstance()
+                        }
+                        mCalendar.set(Calendar.YEAR,currentCalendar.get(Calendar.YEAR))
+                        mCalendar.set(Calendar.MONTH,currentCalendar.get(Calendar.MONTH))
+                        mCalendar.set(Calendar.DAY_OF_MONTH,currentCalendar.get(Calendar.DAY_OF_MONTH))
+                        val loc = MyLocaleDate(it,mCalendar)
+                        CalendarDay(loc, DayOwner.NEXT_MONTH)
                     }
                     monthWeeks[monthWeeks.lastIndex] = lastWeek + outDates
                 }
@@ -212,7 +222,18 @@ internal data class MonthConfig(
                     val lastDay = monthWeeks.last().last()
 
                     val nextRowDates = (1..7).map {
-                        CalendarDay(lastDay.date.plusDay(it), DayOwner.NEXT_MONTH)
+
+                        val mCalendar =
+                            if (currentCalendar is UmmalquraCalendar){
+                                UmmalquraCalendar()
+                            }else{
+                                Calendar.getInstance()
+                            }
+                        mCalendar.set(Calendar.YEAR,currentCalendar.get(Calendar.YEAR))
+                        mCalendar.set(Calendar.MONTH,currentCalendar.get(Calendar.MONTH))
+                        mCalendar.set(Calendar.DAY_OF_MONTH,currentCalendar.get(Calendar.DAY_OF_MONTH))
+                        val loc = MyLocaleDate(it,mCalendar)
+                        CalendarDay(loc, DayOwner.NEXT_MONTH)
                     }
 
                     if (monthWeeks.last().size < 7) {
@@ -367,11 +388,22 @@ internal data class MonthConfig(
 
                 // Add more rows to form a 6 x 7 grid
                 if (outDateStyle == OutDateStyle.END_OF_GRID) {
+                    var lastNum =  weekDaysGroup.last().last().day
                     while (weekDaysGroup.size < 6) {
-                        val lastDay = weekDaysGroup.last().last()
-                        val nextRowDates = (1..7).map {
-                            CalendarDay(lastDay.date.plusDay(it), DayOwner.NEXT_MONTH)
+                        val nextRowDates = (lastNum+1..lastNum+7).map {
+                            val mCalendar =
+                                if (calendar is UmmalquraCalendar){
+                                    UmmalquraCalendar()
+                                }else{
+                                    Calendar.getInstance()
+                                }
+                            mCalendar.set(Calendar.YEAR,calendar.get(Calendar.YEAR))
+                            mCalendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH))
+                            mCalendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH))
+                            val loc = MyLocaleDate(it,mCalendar)
+                            CalendarDay(loc, DayOwner.NEXT_MONTH)
                         }
+                        lastNum += 6
                         weekDaysGroup.add(nextRowDates)
                     }
                 }

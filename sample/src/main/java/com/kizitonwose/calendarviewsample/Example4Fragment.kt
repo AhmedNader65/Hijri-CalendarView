@@ -20,12 +20,10 @@ import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
-import com.kizitonwose.calendarview.utils.yearMonth
 import com.kizitonwose.calendarviewsample.databinding.Example4CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example4CalendarHeaderBinding
 import com.kizitonwose.calendarviewsample.databinding.Example4FragmentBinding
 import java.time.LocalDate
-import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.*
@@ -34,15 +32,9 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
 
     override val toolbar: Toolbar?
         get() = binding.exFourToolbar
-
     override val titleRes: Int? = null
-
-    private val today = LocalDate.now()
-
     private var startDate: MyLocaleDate? = null
     private var endDate: MyLocaleDate? = null
-
-    private val headerDateFormatter = DateTimeFormatter.ofPattern("EEE'\n'd MMM")
 
     private val startBackground: GradientDrawable by lazy {
         requireContext().getDrawableCompat(R.drawable.example_4_continuous_selected_bg_start) as GradientDrawable
@@ -78,7 +70,7 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
         }
 
         val currentMonth = UmmalquraCalendar()
-        binding.exFourCalendar.setup(10, 10, daysOfWeek.first(),TYPE.HIJRI)
+        binding.exFourCalendar.setup(10, 10, daysOfWeek.first(), TYPE.HIJRI)
         binding.exFourCalendar.scrollToMonth(currentMonth)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
@@ -87,7 +79,7 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
 
             init {
                 view.setOnClickListener {
-                    if (day.owner == DayOwner.THIS_MONTH && ( DateUtils.isToday(day.date.yearMonth.timeInMillis) || day.date.yearMonth.timeInMillis > System.currentTimeMillis())) {
+                    if (day.owner == DayOwner.THIS_MONTH && (DateUtils.isToday(day.date.yearMonth.timeInMillis) || day.date.yearMonth.timeInMillis > System.currentTimeMillis())) {
                         val date = day.date
                         if (startDate != null) {
                             if (date.yearMonth.timeInMillis < startDate!!.yearMonth.timeInMillis || endDate != null) {
@@ -144,7 +136,7 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
                                     textView.setTextColorRes(R.color.white)
                                     textView.background = endBackground
                                 }
-                                DateUtils.isToday(day.date.yearMonth.timeInMillis)-> {
+                                DateUtils.isToday(day.date.yearMonth.timeInMillis) -> {
                                     textView.setTextColorRes(R.color.example_4_grey)
                                     roundBgView.makeVisible()
                                     roundBgView.setBackgroundResource(R.drawable.example_4_today_bg)
@@ -173,7 +165,7 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
             override fun create(view: View) = MonthViewContainer(view)
             override fun bind(container: MonthViewContainer, month: CalendarMonth) {
                 val ar = Locale("ar")
-                val title = "${month.calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)}"
+                val title = month.calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)
                 val monthTitle = "$title ${month.year}"
                 container.textView.text = monthTitle
             }
@@ -183,9 +175,21 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
             val startDate = startDate
             val endDate = endDate
             if (startDate != null && endDate != null) {
-                var ar = Locale("ar")
-                val text = "Selected: ${startDate.yearMonth.get(Calendar.YEAR)} ${startDate.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)} ${startDate.yearMonth.get(Calendar.DAY_OF_MONTH)} " +
-                        "- ${endDate.yearMonth.get(Calendar.YEAR)} ${endDate.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)} ${endDate.yearMonth.get(Calendar.DAY_OF_MONTH)} "
+                val ar = Locale("ar")
+                val text = "Selected: ${startDate.yearMonth.get(Calendar.YEAR)} ${
+                    startDate.yearMonth.getDisplayName(
+                        Calendar.MONTH,
+                        Calendar.LONG,
+                        ar
+                    )
+                } ${startDate.yearMonth.get(Calendar.DAY_OF_MONTH)} " +
+                        "- ${endDate.yearMonth.get(Calendar.YEAR)} ${
+                            endDate.yearMonth.getDisplayName(
+                                Calendar.MONTH,
+                                Calendar.LONG,
+                                ar
+                            )
+                        } ${endDate.yearMonth.get(Calendar.DAY_OF_MONTH)} "
 
                 Snackbar.make(requireView(), text, Snackbar.LENGTH_LONG).show()
             } else {
@@ -202,23 +206,29 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
         if (startDate.yearMonth.timeInMillis == endDate.yearMonth.timeInMillis) return false
         if (inDate.yearMonth.timeInMillis == startDate.yearMonth.timeInMillis) return true
         val firstDateInThisMonth = inDate.getNextMonthCalendar()
-        firstDateInThisMonth.set(Calendar.DAY_OF_MONTH,1)
+        firstDateInThisMonth.set(Calendar.DAY_OF_MONTH, 1)
         return firstDateInThisMonth.timeInMillis >= startDate.yearMonth.timeInMillis && firstDateInThisMonth.timeInMillis <= endDate.yearMonth.timeInMillis && startDate.yearMonth.timeInMillis != firstDateInThisMonth.timeInMillis
     }
 
     private fun isOutDateBetween(outDate: MyLocaleDate, startDate: MyLocaleDate, endDate: MyLocaleDate): Boolean {
         if (startDate.yearMonth.timeInMillis == endDate.yearMonth.timeInMillis) return false
         if (outDate.yearMonth.timeInMillis == endDate.yearMonth.timeInMillis) return true
-        val lastDateInThisMonth =  outDate.getPrevMonthCalendar()
-        lastDateInThisMonth.set(Calendar.DAY_OF_MONTH,1)
+        val lastDateInThisMonth = outDate.getPrevMonthCalendar()
+        lastDateInThisMonth.set(Calendar.DAY_OF_MONTH, 1)
         return lastDateInThisMonth.timeInMillis >= startDate.yearMonth.timeInMillis && lastDateInThisMonth.timeInMillis <= endDate.yearMonth.timeInMillis && endDate.yearMonth.timeInMillis != lastDateInThisMonth.timeInMillis
     }
 
     private fun bindSummaryViews() {
         binding.exFourStartDateText.apply {
             if (startDate != null) {
-                var ar = Locale("ar")
-                text = "${startDate!!.yearMonth.get(Calendar.YEAR)} ${startDate!!.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)} ${startDate!!.yearMonth.get(Calendar.DAY_OF_MONTH)} "
+                val ar = Locale("ar")
+                text = "${startDate!!.yearMonth.get(Calendar.YEAR)} ${
+                    startDate!!.yearMonth.getDisplayName(
+                        Calendar.MONTH,
+                        Calendar.LONG,
+                        ar
+                    )
+                } ${startDate!!.yearMonth.get(Calendar.DAY_OF_MONTH)} "
                 setTextColorRes(R.color.example_4_grey)
             } else {
                 text = getString(R.string.start_date)
@@ -229,7 +239,13 @@ class Example4Fragment : BaseFragment(R.layout.example_4_fragment), HasToolbar, 
         binding.exFourEndDateText.apply {
             if (endDate != null) {
                 var ar = Locale("ar")
-                text = "${endDate!!.yearMonth.get(Calendar.YEAR)} ${endDate!!.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)} ${endDate!!.yearMonth.get(Calendar.DAY_OF_MONTH)} "
+                text = "${endDate!!.yearMonth.get(Calendar.YEAR)} ${
+                    endDate!!.yearMonth.getDisplayName(
+                        Calendar.MONTH,
+                        Calendar.LONG,
+                        ar
+                    )
+                } ${endDate!!.yearMonth.get(Calendar.DAY_OF_MONTH)} "
                 setTextColorRes(R.color.example_4_grey)
             } else {
                 text = getString(R.string.end_date)

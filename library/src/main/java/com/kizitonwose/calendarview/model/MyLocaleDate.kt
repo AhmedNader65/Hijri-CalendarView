@@ -30,6 +30,12 @@ data class MyLocaleDate(val dayOfMonth: Int, var yearMonth: Calendar) {
 
     fun plusDay(day: Int): MyLocaleDate {
         yearMonth.add(Calendar.DAY_OF_MONTH, day)
+        if (yearMonth is UmmalquraCalendar){
+            yearMonth.set(Calendar.DAY_OF_MONTH,
+                yearMonth.get(Calendar.DAY_OF_MONTH)+1)
+        }else{
+            yearMonth.add(Calendar.DAY_OF_MONTH,1)
+        }
         return MyLocaleDate(dayOfMonth, yearMonth)
     }
 

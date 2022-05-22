@@ -30,12 +30,7 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
     override val toolbar: Toolbar?
         get() = binding.exSevenToolbar
 
-
-    private var selectedDate : MyLocaleDate? =null
-
-    private val dateFormatter = DateTimeFormatter.ofPattern("dd")
-    private val dayFormatter = DateTimeFormatter.ofPattern("EEE")
-    private val monthFormatter = DateTimeFormatter.ofPattern("MMM")
+    private var selectedDate : MyLocaleDate? = null
 
     private lateinit var binding: Example7FragmentBinding
 
@@ -72,7 +67,7 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
                         // at the end of the calendar view.
 
                         val cal = day.date.yearMonth
-                        cal.add(Calendar.DAY_OF_MONTH,4)
+                        cal.add(Calendar.DAY_OF_MONTH, 4)
                         day.date.yearMonth = cal
                         binding.exSevenCalendar.smoothScrollToDate(day.date)
                     }
@@ -109,8 +104,8 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
         val currentMonth = YearMonth.now()
         // Value for firstDayOfWeek does not matter since inDates and outDates are not generated.
 
-        binding.exSevenCalendar.setup(0, 3, DayOfWeek.values().random(),TYPE.HIJRI)
+        binding.exSevenCalendar.setup(0, 3, DayOfWeek.values().random(), TYPE.HIJRI)
         val cal = UmmalquraCalendar()
-        binding.exSevenCalendar.scrollToDate(MyLocaleDate(cal.get(UmmalquraCalendar.DAY_OF_MONTH),cal) )
+        binding.exSevenCalendar.scrollToDate(MyLocaleDate(cal.get(UmmalquraCalendar.DAY_OF_MONTH), cal))
     }
 }

@@ -21,7 +21,6 @@ import com.kizitonwose.calendarview.utils.Size
 import com.kizitonwose.calendarviewsample.databinding.Example6CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example6CalendarHeaderBinding
 import com.kizitonwose.calendarviewsample.databinding.Example6FragmentBinding
-import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -39,8 +38,6 @@ class Example6MonthView(context: Context) : CardView(context) {
 class Example6Fragment : BaseFragment(R.layout.example_6_fragment), HasBackButton {
 
     override val titleRes: Int = R.string.example_6_title
-
-    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
 
     private lateinit var binding: Example6FragmentBinding
 
@@ -102,8 +99,11 @@ class Example6Fragment : BaseFragment(R.layout.example_6_fragment), HasBackButto
             override fun create(view: View) = MonthViewContainer(view)
             override fun bind(container: MonthViewContainer, month: CalendarMonth) {
                 val ar = Locale("ar")
-                container.textView.text = "${month.calendar.get(Calendar.YEAR)} ${month.calendar.getDisplayName(
-                    Calendar.MONTH, Calendar.LONG, ar)} ${month.calendar.get(Calendar.DAY_OF_MONTH)}"
+                container.textView.text = "${month.calendar.get(Calendar.YEAR)} ${
+                    month.calendar.getDisplayName(
+                        Calendar.MONTH, Calendar.LONG, ar
+                    )
+                } ${month.calendar.get(Calendar.DAY_OF_MONTH)}"
 
                 // Setup each header day text if we have not done that already.
                 if (container.legendLayout.tag == null) {
