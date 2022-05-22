@@ -151,7 +151,10 @@ Setup the view in your Fragment or Activity:
 ```kotlin
 val pastMonths = 10
 val futureMonths = 10
-calendarView.setup(pastMonths, futureMonths, firstDayOfWeek)
+//HIJRI
+calendarView.setup(pastMonths, futureMonths, daysOfWeek.first(),Type.HIJRI )
+//GREGORIAN
+calendarView.setup(pastMonths, futureMonths, daysOfWeek.first(),Type.GREGORIAN )
 calendarView.scrollToMonth(currentMonth)
 ```
 
@@ -247,8 +250,6 @@ Note that setting the `daySize` property to `CalendarView.SIZE_SQUARE` makes the
 - **findFirstVisibleMonth()** and **findLastVisibleMonth()**: Find the first and last visible months on the CalendarView respectively.
 
 - **findFirstVisibleDay()** and **findLastVisibleDay()**: Find the first and last visible days on the CalendarView respectively.
-
-- **setupAsync()**: Setup the CalendarView, *asynchronously*, useful if your `startMonth` and `endMonth` values are *many* years apart.
 
 - **updateMonthRange()**: Update the CalendarView's `startMonth` and/or `endMonth` values after the initial setup. The currently visible month is preserved. Use `updateMonthRangeAsync()` to do this asynchronously.
 
