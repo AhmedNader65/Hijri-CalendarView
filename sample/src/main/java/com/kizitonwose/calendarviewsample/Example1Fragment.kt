@@ -26,7 +26,6 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
         get() = null
 
     override val titleRes: Int = R.string.example_1_title
-0
     private lateinit var binding: Example1FragmentBinding
 
     private val selectedDates = mutableSetOf<MyLocaleDate>()
