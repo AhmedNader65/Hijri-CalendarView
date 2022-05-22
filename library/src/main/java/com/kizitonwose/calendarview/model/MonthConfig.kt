@@ -150,11 +150,20 @@ internal data class MonthConfig(
                     // on the last month only.
                     generateWeekDays(currentCalendar, firstDayOfWeek, generateInDates, OutDateStyle.NONE).flatten()
                 )
+                if(currentCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH) && currentCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR)) {
+                    break
+                } else {val month = currentCalendar.get(Calendar.MONTH)
+                    var nextMonth = 0
+                    if (month == 11) {
+                        nextMonth = 0
+                        currentCalendar.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR) + 1)
+                    } else
+                        nextMonth = month + 1
+                    currentCalendar.set(UmmalquraCalendar.DAY_OF_MONTH, 1)
+                    currentCalendar.set(UmmalquraCalendar.MONTH, nextMonth)
 
-                if (currentCalendar.get(Calendar.MONTH) != endCalendar.get(Calendar.MONTH)) currentCalendar.add(
-                    Calendar.MONTH,
-                    1
-                ) else break
+                }
+                currentTimeInMillis = currentCalendar.timeInMillis
             }
 
             // Regroup data into 7 days. Use toList() to create a copy of the ephemeral list.
