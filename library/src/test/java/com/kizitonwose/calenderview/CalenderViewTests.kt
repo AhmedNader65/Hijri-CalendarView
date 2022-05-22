@@ -73,7 +73,7 @@ class CalenderViewTests {
         may2019.set(Calendar.YEAR, 2019)
         val weekDays = MonthConfig.generateWeekDays(may2019, firstDayOfWeek, true, OutDateStyle.END_OF_ROW)
 
-        val validOutDateIndices = weekDays.flatten().indices.toList().takeLast(2)
+        val validOutDateIndices = weekDays.flatten().indices.toList().takeLast(1)
         val outDatesInMonth = weekDays.flatten().filterIndexed { index, _ -> validOutDateIndices.contains(index) }
 
         // outDates are in appropriate indices and have accurate count.
@@ -87,7 +87,7 @@ class CalenderViewTests {
         may2019.set(Calendar.YEAR, 2019)
         val weekDays = MonthConfig.generateWeekDays(may2019, firstDayOfWeek, true, OutDateStyle.END_OF_GRID)
 
-        val validOutDateIndices = weekDays.flatten().indices.toList().takeLast(9)
+        val validOutDateIndices = weekDays.flatten().indices.toList().takeLast(8)
         val outDatesInMonth = weekDays.flatten().filterIndexed { index, _ -> validOutDateIndices.contains(index) }
 
         // outDates are in appropriate indices and have accurate count.
@@ -100,15 +100,8 @@ class CalenderViewTests {
         may2019.set(Calendar.MONTH, 4)
         may2019.set(Calendar.YEAR, 2019)
         val weekDays = MonthConfig.generateWeekDays(may2019, firstDayOfWeek, true, OutDateStyle.NONE)
-        assertTrue(weekDays.flatten().none { it.owner == DayOwner.NEXT_MONTH })
+        assertTrue(weekDays.flatten().none { it.owner == DayOwner.NEXT_MONTH } )
     }
-//
-//    @Test
-//    fun `test first day of week is in correct position`() {
-//        val weekDays = MonthConfig.generateWeekDays(may2019, firstDayOfWeek, true, OutDateStyle.END_OF_GRID)
-//
-//        assertTrue(weekDays.first().first().date.d == firstDayOfWeek)
-//    }
 
     @Test
     fun `test max row count works with boundaries`() {
@@ -131,7 +124,7 @@ class CalenderViewTests {
         // With a bounded config, OutDateStyle of endOfRow and maxRowCount of 3,
         // there should be two CalendarMonth instances for may2019, the first
         // should have 3 weeks and the second should have 2 weeks.
-        val mayCalendarMonths = months.filter { it.calendar.timeInMillis == may2019.timeInMillis }
+        val mayCalendarMonths = months.filter { it.calendar.get(Calendar.MONTH)== may2019.get(Calendar.MONTH) && it.calendar.get(Calendar.YEAR)== may2019.get(Calendar.YEAR) }
         assertTrue(mayCalendarMonths.count() == 2)
 
         assertTrue(mayCalendarMonths.first().weekDays.count() == 3)
@@ -156,7 +149,7 @@ class CalenderViewTests {
         end.set(Calendar.YEAR, 2019)
         end.add(Calendar.MONTH, 50)
         val months = MonthConfig.generateUnboundedMonths(
-            start,end,
+            start, end,
             firstDayOfWeek, maxRowCount, InDateStyle.ALL_MONTHS, OutDateStyle.END_OF_GRID
         )
 
