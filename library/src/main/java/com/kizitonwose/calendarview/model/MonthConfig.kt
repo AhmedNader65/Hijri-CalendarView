@@ -7,7 +7,6 @@ import java.time.DayOfWeek
 import java.time.YearMonth
 import java.util.*
 
-
 internal data class MonthConfig(
     internal val outDateStyle: OutDateStyle,
     internal val inDateStyle: InDateStyle,
@@ -101,9 +100,13 @@ internal data class MonthConfig(
                 })
 
                 months.addAll(calendarMonths)
-                if(currentCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH) && currentCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR)) {
+                if (currentCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH) && currentCalendar.get(
+                        Calendar.YEAR
+                    ) == endCalendar.get(Calendar.YEAR)
+                ) {
                     break
-                } else {val month = currentCalendar.get(Calendar.MONTH)
+                } else {
+                    val month = currentCalendar.get(Calendar.MONTH)
                     var nextMonth = 0
                     if (month == 11) {
                         nextMonth = 0
@@ -112,7 +115,6 @@ internal data class MonthConfig(
                         nextMonth = month + 1
                     currentCalendar.set(UmmalquraCalendar.DAY_OF_MONTH, 1)
                     currentCalendar.set(UmmalquraCalendar.MONTH, nextMonth)
-
                 }
                 currentTimeInMillis = currentCalendar.timeInMillis
             }
@@ -150,9 +152,13 @@ internal data class MonthConfig(
                     // on the last month only.
                     generateWeekDays(currentCalendar, firstDayOfWeek, generateInDates, OutDateStyle.NONE).flatten()
                 )
-                if(currentCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH) && currentCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR)) {
+                if (currentCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH) && currentCalendar.get(
+                        Calendar.YEAR
+                    ) == endCalendar.get(Calendar.YEAR)
+                ) {
                     break
-                } else {val month = currentCalendar.get(Calendar.MONTH)
+                } else {
+                    val month = currentCalendar.get(Calendar.MONTH)
                     var nextMonth = 0
                     if (month == 11) {
                         nextMonth = 0
@@ -161,7 +167,6 @@ internal data class MonthConfig(
                         nextMonth = month + 1
                     currentCalendar.set(UmmalquraCalendar.DAY_OF_MONTH, 1)
                     currentCalendar.set(UmmalquraCalendar.MONTH, nextMonth)
-
                 }
                 currentTimeInMillis = currentCalendar.timeInMillis
             }
@@ -180,15 +185,15 @@ internal data class MonthConfig(
                     val lastDay = lastWeek.last()
                     val outDates = (1..7 - lastWeek.size).map {
                         val mCalendar =
-                        if (currentCalendar is UmmalquraCalendar){
-                            UmmalquraCalendar()
-                        }else{
-                            Calendar.getInstance()
-                        }
-                        mCalendar.set(Calendar.YEAR,currentCalendar.get(Calendar.YEAR))
-                        mCalendar.set(Calendar.MONTH,currentCalendar.get(Calendar.MONTH))
-                        mCalendar.set(Calendar.DAY_OF_MONTH,currentCalendar.get(Calendar.DAY_OF_MONTH))
-                        val loc = MyLocaleDate(it,mCalendar)
+                            if (currentCalendar is UmmalquraCalendar) {
+                                UmmalquraCalendar()
+                            } else {
+                                Calendar.getInstance()
+                            }
+                        mCalendar.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR))
+                        mCalendar.set(Calendar.MONTH, currentCalendar.get(Calendar.MONTH))
+                        mCalendar.set(Calendar.DAY_OF_MONTH, currentCalendar.get(Calendar.DAY_OF_MONTH))
+                        val loc = MyLocaleDate(it, mCalendar)
                         CalendarDay(loc, DayOwner.NEXT_MONTH)
                     }
                     monthWeeks[monthWeeks.lastIndex] = lastWeek + outDates
@@ -224,15 +229,15 @@ internal data class MonthConfig(
                     val nextRowDates = (1..7).map {
 
                         val mCalendar =
-                            if (currentCalendar is UmmalquraCalendar){
+                            if (currentCalendar is UmmalquraCalendar) {
                                 UmmalquraCalendar()
-                            }else{
+                            } else {
                                 Calendar.getInstance()
                             }
-                        mCalendar.set(Calendar.YEAR,currentCalendar.get(Calendar.YEAR))
-                        mCalendar.set(Calendar.MONTH,currentCalendar.get(Calendar.MONTH))
-                        mCalendar.set(Calendar.DAY_OF_MONTH,currentCalendar.get(Calendar.DAY_OF_MONTH))
-                        val loc = MyLocaleDate(it,mCalendar)
+                        mCalendar.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR))
+                        mCalendar.set(Calendar.MONTH, currentCalendar.get(Calendar.MONTH))
+                        mCalendar.set(Calendar.DAY_OF_MONTH, currentCalendar.get(Calendar.DAY_OF_MONTH))
+                        val loc = MyLocaleDate(it, mCalendar)
                         CalendarDay(loc, DayOwner.NEXT_MONTH)
                     }
 
@@ -388,19 +393,19 @@ internal data class MonthConfig(
 
                 // Add more rows to form a 6 x 7 grid
                 if (outDateStyle == OutDateStyle.END_OF_GRID) {
-                    var lastNum =  weekDaysGroup.last().last().day
+                    var lastNum = weekDaysGroup.last().last().day
                     while (weekDaysGroup.size < 6) {
-                        val nextRowDates = (lastNum+1..lastNum+7).map {
+                        val nextRowDates = (lastNum + 1..lastNum + 7).map {
                             val mCalendar =
-                                if (calendar is UmmalquraCalendar){
+                                if (calendar is UmmalquraCalendar) {
                                     UmmalquraCalendar()
-                                }else{
+                                } else {
                                     Calendar.getInstance()
                                 }
-                            mCalendar.set(Calendar.YEAR,calendar.get(Calendar.YEAR))
-                            mCalendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH))
-                            mCalendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH))
-                            val loc = MyLocaleDate(it,mCalendar)
+                            mCalendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR))
+                            mCalendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH))
+                            mCalendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH))
+                            val loc = MyLocaleDate(it, mCalendar)
                             CalendarDay(loc, DayOwner.NEXT_MONTH)
                         }
                         lastNum += 6

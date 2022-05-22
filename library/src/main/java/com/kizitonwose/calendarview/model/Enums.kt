@@ -27,7 +27,6 @@ enum class TYPE {
     HIJRI,
 
     GREGORIAN,
-
 }
 
 /**

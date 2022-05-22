@@ -21,7 +21,6 @@ import com.kizitonwose.calendarview.utils.Size
 import com.kizitonwose.calendarviewsample.databinding.Example6CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example6CalendarHeaderBinding
 import com.kizitonwose.calendarviewsample.databinding.Example6FragmentBinding
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 // We assign this class to the `monthViewClass` attribute in XML.

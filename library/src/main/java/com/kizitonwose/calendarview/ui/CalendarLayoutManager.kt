@@ -11,7 +11,6 @@ import com.kizitonwose.calendarview.CalendarView
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.ScrollMode
 import com.kizitonwose.calendarview.utils.NO_INDEX
-import java.time.YearMonth
 import java.util.*
 
 internal class CalendarLayoutManager(private val calView: CalendarView, @RecyclerView.Orientation orientation: Int) :
@@ -53,7 +52,8 @@ internal class CalendarLayoutManager(private val calView: CalendarView, @Recycle
             calView.post { adapter.notifyMonthScrollListenerIfNeeded() }
         } else {
             calView.post {
-                val viewHolder = calView.findViewHolderForAdapterPosition(monthPosition) as? MonthViewHolder ?: return@post
+                val viewHolder =
+                    calView.findViewHolderForAdapterPosition(monthPosition) as? MonthViewHolder ?: return@post
                 val offset = calculateDayViewOffsetInParent(day, viewHolder.itemView)
                 scrollToPositionWithOffset(monthPosition, -offset)
                 calView.post { adapter.notifyMonthScrollListenerIfNeeded() }

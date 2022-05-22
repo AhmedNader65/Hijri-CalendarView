@@ -1,8 +1,6 @@
 package com.kizitonwose.calendarview.model
 
-import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import java.io.Serializable
-import java.time.YearMonth
 import java.util.*
 
 data class CalendarMonth(

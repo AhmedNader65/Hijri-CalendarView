@@ -3,7 +3,6 @@ package com.kizitonwose.calendarviewsample
 import android.animation.ValueAnimator
 import android.os.Bundle
 import android.text.format.DateUtils
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar

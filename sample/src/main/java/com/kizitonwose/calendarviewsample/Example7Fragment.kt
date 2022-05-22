@@ -14,13 +14,10 @@ import com.kizitonwose.calendarview.model.TYPE
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarview.utils.Size
-import com.kizitonwose.calendarview.utils.yearMonth
 import com.kizitonwose.calendarviewsample.databinding.Example7CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example7FragmentBinding
 import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, HasBackButton {

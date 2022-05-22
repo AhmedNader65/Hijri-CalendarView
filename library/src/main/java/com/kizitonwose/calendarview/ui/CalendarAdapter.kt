@@ -17,8 +17,6 @@ import com.kizitonwose.calendarview.utils.NO_INDEX
 import com.kizitonwose.calendarview.utils.getVerticalMargins
 import com.kizitonwose.calendarview.utils.inflate
 import com.kizitonwose.calendarview.utils.orZero
-import java.time.LocalDate
-import java.time.YearMonth
 import java.util.*
 
 internal typealias LP = ViewGroup.LayoutParams
