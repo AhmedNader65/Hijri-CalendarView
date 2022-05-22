@@ -61,14 +61,23 @@ internal data class MonthConfig(
             job: Job = uninterruptedJob
         ): List<CalendarMonth> {
             val months = mutableListOf<CalendarMonth>()
-            var currentCalendar = startCalendar
+            var currentCalendar = if (startCalendar is UmmalquraCalendar){
+                UmmalquraCalendar()
+            }else{
+                Calendar.getInstance()
+            }
+            currentCalendar.set(Calendar.YEAR,startCalendar.get(Calendar.YEAR))
+            currentCalendar.set(Calendar.MONTH,startCalendar.get(Calendar.MONTH))
+            currentCalendar.set(Calendar.DAY_OF_MONTH,startCalendar.get(Calendar.DAY_OF_MONTH))
+
             var currentTimeInMillis = currentCalendar.timeInMillis
             val endTimesInMillis = endCalendar.timeInMillis
 
             while (currentTimeInMillis <= endTimesInMillis) {
                 val generateInDates = when (inDateStyle) {
                     InDateStyle.ALL_MONTHS -> true
-                    InDateStyle.FIRST_MONTH -> true
+                    InDateStyle.FIRST_MONTH -> currentCalendar.get(Calendar.DAY_OF_YEAR) == startCalendar.get(Calendar.DAY_OF_YEAR) &&
+                            currentCalendar.get(Calendar.YEAR) == startCalendar.get(Calendar.YEAR)
                     InDateStyle.NONE -> false
                 }
 
@@ -142,7 +151,8 @@ internal data class MonthConfig(
                 // If inDates are enabled with boundaries disabled,
                 // we show them on the first month only.
                 val generateInDates = when (inDateStyle) {
-                    InDateStyle.FIRST_MONTH, InDateStyle.ALL_MONTHS -> true
+                    InDateStyle.FIRST_MONTH, InDateStyle.ALL_MONTHS -> currentCalendar.get(Calendar.DAY_OF_YEAR) == startCalendar.get(Calendar.DAY_OF_YEAR) &&
+                            currentCalendar.get(Calendar.YEAR) == startCalendar.get(Calendar.YEAR)
                     InDateStyle.NONE -> false
                 }
 
