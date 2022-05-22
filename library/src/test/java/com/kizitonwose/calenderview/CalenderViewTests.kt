@@ -99,7 +99,7 @@ class CalenderViewTests {
         may2019.set(Calendar.MONTH, 4)
         may2019.set(Calendar.YEAR, 2019)
         val weekDays = MonthConfig.generateWeekDays(may2019, firstDayOfWeek, true, OutDateStyle.NONE)
-        assertTrue(weekDays.flatten().none { it.owner == DayOwner.NEXT_MONTH } )
+        assertTrue(weekDays.flatten().none { it.owner == DayOwner.NEXT_MONTH })
     }
 
     @Test
@@ -123,7 +123,7 @@ class CalenderViewTests {
         // With a bounded config, OutDateStyle of endOfRow and maxRowCount of 3,
         // there should be two CalendarMonth instances for may2019, the first
         // should have 3 weeks and the second should have 2 weeks.
-        val mayCalendarMonths = months.filter { it.calendar.get(Calendar.MONTH)== may2019.get(Calendar.MONTH) && it.calendar.get(Calendar.YEAR)== may2019.get(Calendar.YEAR) }
+        val mayCalendarMonths = months.filter { it.calendar.get(Calendar.MONTH) == may2019.get(Calendar.MONTH) && it.calendar.get(Calendar.YEAR) == may2019.get(Calendar.YEAR) }
         assertTrue(mayCalendarMonths.count() == 2)
 
         assertTrue(mayCalendarMonths.first().weekDays.count() == 3)

@@ -20,6 +20,7 @@ import com.kizitonwose.calendarviewsample.databinding.Example5CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example5CalendarHeaderBinding
 import com.kizitonwose.calendarviewsample.databinding.Example5EventItemViewBinding
 import com.kizitonwose.calendarviewsample.databinding.Example5FragmentBinding
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -76,7 +77,7 @@ class Example5Fragment : BaseFragment(R.layout.example_5_fragment), HasToolbar {
     private val monthTitleFormatter = DateTimeFormatter.ofPattern("MMMM")
 
     private val flightsAdapter = Example5FlightsAdapter()
-    private val flights = generateFlights().groupBy { it.time.toLocalDate() }
+    private val flights : Map<LocalDate,List<Flight>> = generateFlights().groupBy { it.time.toLocalDate() }
 
     private lateinit var binding: Example5FragmentBinding
 
@@ -132,8 +133,10 @@ class Example5Fragment : BaseFragment(R.layout.example_5_fragment), HasToolbar {
                 if (day.owner == DayOwner.THIS_MONTH) {
                     textView.setTextColorRes(R.color.example_5_text_grey)
 //                    layout.setBackgroundResource(if (selectedDate == day.date) R.drawable.example_5_selected_bg else 0)
+                    val localDate =
+                        LocalDateTime.ofInstant(day.date.yearMonth.toInstant(), day.date.yearMonth.timeZone.toZoneId()).toLocalDate()
 
-                    val flights = flights[day.date]
+                    val flights = flights[localDate]
                     if (flights != null) {
                         if (flights.count() == 1) {
                             flightBottomView.setBackgroundColor(view.context.getColorCompat(flights[0].color))
@@ -206,7 +209,13 @@ class Example5Fragment : BaseFragment(R.layout.example_5_fragment), HasToolbar {
 
     private fun updateAdapterForDate(date: MyLocaleDate?) {
         flightsAdapter.flights.clear()
-        flightsAdapter.flights.addAll(flights[date].orEmpty())
+
+        date?.let {
+            val localDate =
+                LocalDateTime.ofInstant(it.yearMonth.toInstant(), it.yearMonth.timeZone.toZoneId()).toLocalDate()
+
+            flightsAdapter.flights.addAll(flights[localDate].orEmpty())
+        }
         flightsAdapter.notifyDataSetChanged()
     }
 }

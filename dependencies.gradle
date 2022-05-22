@@ -13,9 +13,9 @@ def coroutines_version = "1.4.3"
 ext.deps = [
     gradle_plugins: [
         android: "com.android.tools.build:gradle:7.2.0",
-        kotlin: "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.32",
+        kotlin: "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0-RC",
         maven_release: "com.github.dcendents:android-maven-gradle-plugin:2.1",
-        ktlint: "org.jlleitschuh.gradle:ktlint-gradle:9.4.1"
+        ktlint: "org.jlleitschuh.gradle:ktlint-gradle:10.3.0"
     ],
 
     androidx: [
