@@ -7,7 +7,6 @@ import com.kizitonwose.calendarview.model.OutDateStyle
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.DayOfWeek
-import java.time.YearMonth
 import java.util.*
 
 /**
