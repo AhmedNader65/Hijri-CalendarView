@@ -2,15 +2,15 @@
 
 A highly customizable calendar library for Android, powered by RecyclerView.
 
-[![CI](https://github.com/kizitonwose/CalendarView/workflows/CI/badge.svg?branch=master)](https://github.com/kizitonwose/CalendarView/actions) 
-[![JitPack](https://jitpack.io/v/kizitonwose/CalendarView.svg)](https://jitpack.io/#kizitonwose/CalendarView) 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/kizitonwose/CalendarView/blob/master/LICENSE.md) 
-[![Twitter](https://img.shields.io/badge/Twitter-@kizitonwose-9C27B0.svg)](https://twitter.com/kizitonwose)
+[![CI](https://github.com/AhmedNader65/Hijri-CalendarView/workflows/CI/badge.svg?branch=master)](https://github.com/kizitonwose/Hijri-CalendarView/actions) 
+[![](https://jitpack.io/v/AhmedNader65/Hijri-CalendarView.svg)](https://jitpack.io/#AhmedNader65/Hijri-CalendarView)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/AhmedNader65/Hijri-CalendarView/blob/master/LICENSE.md) 
+[![Twitter](https://img.shields.io/badge/Twitter-@kizitonwose-9C27B0.svg)](https://twitter.com/AhmedNader65)
 
 
 **With this library, your calendar will look however you want it to.**
 
-![Preview](https://raw.githubusercontent.com/kizitonwose/CalendarView/master/images/image-all.png)
+![Preview](https://raw.githubusercontent.com/AhmedNader65/Hijri-CalendarView/master/images/image-all.png)
 
 ## Features
 
@@ -25,15 +25,14 @@ A highly customizable calendar library for Android, powered by RecyclerView.
 - [x] [Month headers and footers](#adding-month-headers-and-footers) - Add headers/footers of any kind on each month.
 - [x] Easily scroll to any date or month view using the date.
 - [x] Use all RecyclerView customisations(decorators etc) since CalendarView extends from RecyclerView.
-- [x] Design your calendar [however you want.](https://github.com/kizitonwose/CalendarView/issues/1) The library provides the logic, you provide the views.
 
 ## Sample project
 
 It's very important to check out the sample app. Most techniques that you would want to implement are already implemented in the examples.
 
-Download the sample app [here](https://github.com/kizitonwose/CalendarView/releases/download/1.0.0/sample.apk)
+Download the sample app [here](https://github.com/AhmedNader65/CalendarView/releases/download/1.0.0/sample.apk)
 
-View the sample app's source code [here](https://github.com/kizitonwose/CalendarView/tree/master/sample)
+View the sample app's source code [here](https://github.com/AhmedNader65/CalendarView/tree/master/sample)
 
 ## Setup
 
@@ -86,13 +85,11 @@ Add CalendarView to your app `build.gradle`:
 
 ```groovy
 dependencies {
-	implementation 'com.github.kizitonwose:CalendarView:<latest-version>'
+	implementation 'com.github.AhmedNader65:Hijri-CalendarView:<latest-version>'
 }
 ```
 
 You can find the latest version of `CalendarView` on the JitPack badge above the preview images.
-
-**Note: If you're upgrading from version 0.3.x to 0.4.x or 1.x.x, see the [migration guide](https://github.com/kizitonwose/CalendarView#migration).**
 
 ## Usage
 
@@ -101,7 +98,7 @@ You can find the latest version of `CalendarView` on the JitPack badge above the
 Add CalendarView to your XML like any other view.
 
 ```xml
-<com.kizitonwose.calendarview.CalendarView
+<com.mrerror.calendarview.CalendarView
     android:id="@+id/calendarView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -149,14 +146,12 @@ calendarView.dayBinder = object : DayBinder<DayViewContainer> {
 
 #### Step 2
 
-Setup the desired dates in your Fragment or Activity:
+Setup the view in your Fragment or Activity:
 
 ```kotlin
-val currentMonth = YearMonth.now()
-val firstMonth = currentMonth.minusMonths(10)
-val lastMonth = currentMonth.plusMonths(10)
-val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-calendarView.setup(firstMonth, lastMonth, firstDayOfWeek)
+val pastMonths = 10
+val futureMonths = 10
+calendarView.setup(pastMonths, futureMonths, firstDayOfWeek)
 calendarView.scrollToMonth(currentMonth)
 ```
 
@@ -239,13 +234,13 @@ Note that setting the `daySize` property to `CalendarView.SIZE_SQUARE` makes the
 
 #### Methods
 
-- **scrollToDate(date: LocalDate)**: Scroll to a specific date on the calendar. Use `smoothScrollToDate()` to get a smooth scrolling animation. 
+- **scrollToDate(date: MyLocaleDate)**: Scroll to a specific date on the calendar. Use `smoothScrollToDate()` to get a smooth scrolling animation. 
 
-- **scrollToMonth(month: YearMonth)**: Scroll to a month on the calendar. Use `smoothScrollToMonth()` to get a smooth scrolling animation.
+- **scrollToMonth(month: Calendar)**: Scroll to a month on the calendar. Use `smoothScrollToMonth()` to get a smooth scrolling animation.
 
-- **notifyDateChanged(date: LocalDate)**: Reload the view for the specified date.
+- **notifyDateChanged(date: MyLocaleDate)**: Reload the view for the specified date.
 
-- **notifyMonthChanged(month: YearMonth)**: Reload the header, body and footer views for the specified month.
+- **notifyMonthChanged(month: Calendar)**: Reload the header, body and footer views for the specified month.
 
 - **notifyCalendarChanged()**: Reload the entire calendar.
 
@@ -260,7 +255,7 @@ Note that setting the `daySize` property to `CalendarView.SIZE_SQUARE` makes the
 - **updateMonthConfiguration()**: Update `inDateStyle`, `outDateStyle`, `maxRowCount` and `hasBoundaries` properties without generating the underlying calendar data repeatedly. Prefer this if setting more than one of these properties at the same time. Use `updateMonthConfigurationAsync()` to do this asynchronously.
 
 
-There's no need to list all available methods or repeating the documentation here. Please see the [CalendarView](https://github.com/kizitonwose/CalendarView/blob/master/library/src/main/java/com/kizitonwose/calendarview/CalendarView.kt) class for all properties and methods available with proper documentation.
+There's no need to list all available methods or repeating the documentation here. Please see the [CalendarView](https://github.com/AhmedNader65/Hijri-CalendarView/blob/master/library/src/main/java/com/mrerror/calendarview/CalendarView.kt) class for all properties and methods available with proper documentation.
 
 ### Date clicks
 
@@ -282,7 +277,7 @@ XML file for the date cell `calendar_day_layout.xml`:
 Of course, you need to set the file as `cv_dayViewResource` on the CalendarView:
 
 ```xml
-<com.kizitonwose.calendarview.CalendarView
+<com.mrerror.calendarview.CalendarView
     android:id="@+id/calendarView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -292,7 +287,8 @@ Of course, you need to set the file as `cv_dayViewResource` on the CalendarView:
 Click listener implementation in your Fragment or Activity:
 
 ```kotlin
-class DayViewContainer(view: View) : ViewContainer(view) {
+
+ import java.util.*class DayViewContainer(view: View) : ViewContainer(view) {
     val textView = view.findViewById<TextView>(R.id.calendarDayText)
     // Will be set when this container is bound
     lateinit var day: CalendarDay
@@ -310,7 +306,7 @@ calendarView.dayBinder = object : DayBinder<DayViewContainer> {
         // Set the calendar day for this container.
         container.day = day
         // Set the date text
-        container.textView.text = day.date.dayOfMonth.toString()
+        container.textView.text = day.date.get(Calendar.DAY_OF_MONTH).toString()
         // Other binding logic
     }
 }
@@ -327,7 +323,7 @@ For this example, I want only the last clicked date to be selected on the calend
 Firstly, let's keep a reference to the selected date:
 
 ```kotlin
-private var selectedDate: LocalDate? = null
+private var selectedDate: MyLocaleDate? = null
 ```
 
 Next, using the click logic already shown in the date click section above, we update this field whenever a date is clicked and show the selection background on the clicked date. 
@@ -416,7 +412,7 @@ calendarView.dayBinder = object : DayBinder<DayViewContainer> {
     override fun bind(container: DayViewContainer, day: CalendarDay) {
         container.day = day
         val textView = container.textView
-        textView.text = day.date.dayOfMonth.toString()
+        textView.text = day.date.get(Calendar.DAY_OF_MONTH).toString()
         textView.alpha = if (day.owner == DayOwner.THIS_MONTH) 1f else 0.3f
 }
 ```
@@ -443,7 +439,7 @@ Create the header view in `res/layout/calendar_month_header_layout.xml`:
 Set the view as the month header resource:
 
 ```xml
-<com.kizitonwose.calendarview.CalendarView
+<com.mrerror.calendarview.CalendarView
     android:id="@+id/calendarView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -460,7 +456,7 @@ class MonthViewContainer(view: View) : ViewContainer(view) {
 calendarView.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
     override fun create(view: View) = MonthViewContainer(view)
     override fun bind(container: MonthViewContainer, month: CalendarMonth) {
-        container.textView.text = "${month.yearMonth.month.name.toLowerCase().capitalize()} ${month.year}"
+        container.textView.text = "${date.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale("ar"))} ${date.yearMonth.get(Calendar.YEAR)} "
     }
 }
 ```
@@ -490,14 +486,17 @@ With the method above, you can set up the calendar so the first day of the week 
 
 ```kotlin
 val daysOfWeek = daysOfWeekFromLocale()
-calendarView.setup(startMonth, endMonth, daysOfWeek.first())
+//HIJRI
+calendarView.setup(prevMonth, nextMonth, daysOfWeek.first(),Type.HIJRI )
+//GREGORIAN
+calendarView.setup(prevMonth, nextMonth, daysOfWeek.first(),Type.GREGORIAN )
 ```
 
 Of course, this could be simplified as:
 
 ```kotlin
 val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-calendarView.setup(startMonth, endMonth, firstDayOfWeek)
+calendarView.setup(prevMonth, nextMonth, firstDayOfWeek,Type.HIJRI)
 ```
 
 However, you would typically use the `daysOfWeek` array values to set up the weekday texts in your month header view, this way it matches what is shown on the calendarView.
@@ -514,7 +513,7 @@ val daysOfWeek = arrayOf(
     DayOfWeek.FRIDAY,
     DayOfWeek.SATURDAY
 )
-calendarView.setup(startMonth, endMonth, daysOfWeek.first())
+calendarView.setup(prevMonth, nextMonth, daysOfWeek.first(),Type.HIJRI)
 // Use the daysOfWeek to set up your month header texts:
 // Sun | Mon | Tue | Wed | Thu | Fri | Sat
 ```
@@ -562,36 +561,15 @@ You can also set `hasBoundaries` to `true` for a week mode calendar. This helps 
 
 Remember that all the screenshots above are just examples of what you can achieve with this library and you can absolutely build your calendar to look however you want.
 
-**Made a cool calendar with this library? Share an image [here](https://github.com/kizitonwose/CalendarView/issues/1).**
-
-## FAQ
-
-**Q**: How do I use this library in a Java project?
-
-**A**: It works out of the box, however, the `MonthScrollListener` is not an interface but a Kotlin function. To set the `MonthScrollListener` in a Java project see [this](https://github.com/kizitonwose/CalendarView/issues/74).
-
-**Q**: How do I disable user scrolling on the calendar so I can only scroll programmatically?
-
-**A**: See [this](https://github.com/kizitonwose/CalendarView/issues/38#issuecomment-525786644).
-
-**Q**: Why am I getting the same `YearMonth` value in the `CalendarMonth` passed into the `MonthScrollListener`?
-
-**A**: This is because you have set `app:cv_hasBoundaries` to `false` in XML or have called `calendarView.hasBoundaries = false` in code. When this is set, the underlying `YearMonth` is undefined on all indices as each index could have multiple months depending on your `maxRowCount` value. If you need the month value with the `hasBoundaries = false` setting, you can get it from any of the `CalendarDay` values in the `CalendarMonth` class. You can always check if the first and last dates are from different months and act accordingly.
-
-## Migration
-
-If you're upgrading from version `0.3.x` to `0.4.x` or 1.x.x, the main change is that CalendarView moved from using [ThreeTenABP](https://github.com/JakeWharton/ThreeTenABP) to [Java 8 API desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) for dates. After following the new [setup](https://github.com/kizitonwose/CalendarView#setup) instructions, the next thing you need to do is change your imports for date/time related classes from `org.threeten.bp.*` to `java.time.*`.
-
-You also need to remove the line `AndroidThreeTen.init(this)` from the `onCreate()` method of your application class as it's no longer needed.
 
 ## Contributing
 
-Found a bug? feel free to fix it and send a pull request or [open an issue](https://github.com/kizitonwose/CalendarView/issues).
+Found a bug? feel free to fix it and send a pull request or [open an issue](https://github.com/AhmedNader65/Hijri-CalendarView/issues).
 
 ## Inspiration
 
-CalendarView was inspired by the iOS library [JTAppleCalendar](https://github.com/patchthecode/JTAppleCalendar). I used JTAppleCalendar in an iOS project but couldn't find anything as customizable on Android so I built this. 
-You'll find some similar terms like `InDateStyle`, `OutDateStyle`, `DayOwner` etc.
+Hijri-CalendarView is a Fork of the great library  [CalendarView](https://github.com/kizitonwose/CalendarView). I used Calendars instead of dates. 
+It'll be a good choice if you're not using Hijri Calendar
 
 ## License
-CalendarView is distributed under the MIT license. See [LICENSE](https://github.com/kizitonwose/CalendarView/blob/master/LICENSE.md) for details.
+CalendarView is distributed under the MIT license. See [LICENSE](https://github.com/AhmedNader65/Hijri-CalendarView/blob/master/LICENSE.md) for details.
