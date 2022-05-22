@@ -23,8 +23,6 @@ import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarviewsample.databinding.Example4CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example4CalendarHeaderBinding
 import com.kizitonwose.calendarviewsample.databinding.Example4FragmentBinding
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.*
 

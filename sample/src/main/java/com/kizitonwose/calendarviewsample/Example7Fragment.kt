@@ -27,7 +27,7 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
     override val toolbar: Toolbar?
         get() = binding.exSevenToolbar
 
-    private var selectedDate : MyLocaleDate? = null
+    private var selectedDate: MyLocaleDate? = null
 
     private lateinit var binding: Example7FragmentBinding
 
