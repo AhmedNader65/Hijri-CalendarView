@@ -9,9 +9,11 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.view.children
+import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.CalendarMonth
 import com.kizitonwose.calendarview.model.DayOwner
+import com.kizitonwose.calendarview.model.TYPE
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
@@ -21,6 +23,7 @@ import com.kizitonwose.calendarviewsample.databinding.Example6CalendarHeaderBind
 import com.kizitonwose.calendarviewsample.databinding.Example6FragmentBinding
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 // We assign this class to the `monthViewClass` attribute in XML.
 // See usage in example_6_fragment.xml
@@ -60,7 +63,12 @@ class Example6Fragment : BaseFragment(R.layout.example_6_fragment), HasBackButto
             // Add margins around our card view.
             val horizontalMargin = dpToPx(8, requireContext())
             val verticalMargin = dpToPx(14, requireContext())
-            setMonthMargins(start = horizontalMargin, end = horizontalMargin, top = verticalMargin, bottom = verticalMargin)
+            setMonthMargins(
+                start = horizontalMargin,
+                end = horizontalMargin,
+                top = verticalMargin,
+                bottom = verticalMargin
+            )
         }
 
         class DayViewContainer(view: View) : ViewContainer(view) {
@@ -81,29 +89,32 @@ class Example6Fragment : BaseFragment(R.layout.example_6_fragment), HasBackButto
         }
 
         val daysOfWeek = daysOfWeekFromLocale()
-        val currentMonth = YearMonth.now()
-//        binding.exSixCalendar.setup(currentMonth.minusMonths(10), currentMonth.plusMonths(10), daysOfWeek.first())
-//        binding.exSixCalendar.scrollToMonth(currentMonth)
+        val currentMonth = UmmalquraCalendar()
+        binding.exSixCalendar.setup(10, 10, daysOfWeek.first(), TYPE.HIJRI)
+        binding.exSixCalendar.scrollToMonth(currentMonth)
 
         class MonthViewContainer(view: View) : ViewContainer(view) {
             val binding = Example6CalendarHeaderBinding.bind(view)
             val textView = binding.exSixMonthText
             val legendLayout = binding.legendLayout.root
         }
-//        binding.exSixCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
-//            override fun create(view: View) = MonthViewContainer(view)
-//            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
-//                container.textView.text = titleFormatter.format(month.yearMonth)
-//                // Setup each header day text if we have not done that already.
-//                if (container.legendLayout.tag == null) {
-//                    container.legendLayout.tag = month.yearMonth
-//                    container.legendLayout.children.map { it as TextView }.forEachIndexed { index, tv ->
-//                        tv.text = daysOfWeek[index].name.first().toString()
-//                        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
-//                        tv.setTextColorRes(R.color.example_6_black)
-//                    }
-//                }
-//            }
-//        }
+        binding.exSixCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
+            override fun create(view: View) = MonthViewContainer(view)
+            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
+                val ar = Locale("ar")
+                container.textView.text = "${month.calendar.get(Calendar.YEAR)} ${month.calendar.getDisplayName(
+                    Calendar.MONTH, Calendar.LONG, ar)} ${month.calendar.get(Calendar.DAY_OF_MONTH)}"
+
+                // Setup each header day text if we have not done that already.
+                if (container.legendLayout.tag == null) {
+                    container.legendLayout.tag = month.calendar
+                    container.legendLayout.children.map { it as TextView }.forEachIndexed { index, tv ->
+                        tv.text = daysOfWeek[index].name.first().toString()
+                        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
+                        tv.setTextColorRes(R.color.example_6_black)
+                    }
+                }
+            }
+        }
     }
 }

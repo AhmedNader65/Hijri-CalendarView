@@ -11,16 +11,11 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
-import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
-import com.kizitonwose.calendarview.utils.next
-import com.kizitonwose.calendarview.utils.yearMonth
 import com.kizitonwose.calendarviewsample.databinding.Example1CalendarDayBinding
 import com.kizitonwose.calendarviewsample.databinding.Example1FragmentBinding
-import java.time.LocalDate
-import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.*
@@ -31,7 +26,7 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
         get() = null
 
     override val titleRes: Int = R.string.example_1_title
-
+0
     private lateinit var binding: Example1FragmentBinding
 
     private val selectedDates = mutableSetOf<MyLocaleDate>()
@@ -48,10 +43,10 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
             }
         }
 
-        val currentMonth = UmmalquraCalendar()
+        val currentMonth = Calendar.getInstance()
         val endMonth = Calendar.getInstance()
         endMonth.add(Calendar.MONTH, 5)
-        binding.exOneCalendar.setup(0, 5, daysOfWeek.first(), TYPE.HIJRI)
+        binding.exOneCalendar.setup(0, 5, daysOfWeek.first(), TYPE.GREGORIAN)
         binding.exOneCalendar.scrollToMonth(currentMonth)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
@@ -119,10 +114,10 @@ class Example1Fragment : BaseFragment(R.layout.example_1_fragment), HasToolbar {
                 val lastDate = it.weekDays.last().last().date
                 if (firstDate.yearMonth == lastDate.yearMonth) {
                     binding.exOneYearText.text = firstDate.yearMonth.get(Calendar.YEAR).toString()
-                    binding.exOneMonthText.text = firstDate.yearMonth.getDisplayName(UmmalquraCalendar.MONTH, Calendar.LONG,Locale("ar"))
+                    binding.exOneMonthText.text = firstDate.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG,Locale("ar"))
                 } else {
-                    val nextMonth = UmmalquraCalendar()
-                    nextMonth.set(UmmalquraCalendar.MONTH, it.month)
+                    val nextMonth = Calendar.getInstance()
+                    nextMonth.set(Calendar.MONTH, it.month)
                     binding.exOneMonthText.text = "${
                         (nextMonth.getDisplayName(
                             Calendar.MONTH,
