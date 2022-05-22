@@ -5,7 +5,7 @@ A highly customizable calendar library for Android, powered by RecyclerView.
 [![CI](https://github.com/AhmedNader65/Hijri-CalendarView/workflows/CI/badge.svg?branch=master)](https://github.com/kizitonwose/Hijri-CalendarView/actions) 
 [![](https://jitpack.io/v/AhmedNader65/Hijri-CalendarView.svg)](https://jitpack.io/#AhmedNader65/Hijri-CalendarView)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/AhmedNader65/Hijri-CalendarView/blob/master/LICENSE.md) 
-[![Twitter](https://img.shields.io/badge/Twitter-@kizitonwose-9C27B0.svg)](https://twitter.com/AhmedNader65)
+[![Twitter](https://img.shields.io/badge/Twitter-@Ahmed_nader65-9C27B0.svg)](https://twitter.com/AhmedNader65)
 
 
 **With this library, your calendar will look however you want it to.**
