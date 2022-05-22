@@ -132,7 +132,10 @@ internal data class MonthConfig(
             // Generate a flat list of all days in the given month range
             val allDays = mutableListOf<CalendarDay>()
             var currentCalendar = startCalendar
-            while (currentCalendar.get(Calendar.MONTH) <= endCalendar.get(Calendar.MONTH) && job.isActive) {
+            var currentTimeInMillis = currentCalendar.timeInMillis
+            val endTimesInMillis = endCalendar.timeInMillis
+
+            while (currentTimeInMillis <= endTimesInMillis && job.isActive) {
 
                 // If inDates are enabled with boundaries disabled,
                 // we show them on the first month only.
