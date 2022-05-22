@@ -5,7 +5,7 @@ apply from: rootProject.file("dependencies.gradle")
 android {
     compileSdkVersion versions.compile_sdk
     defaultConfig {
-        applicationId "com.kizitonwose.calendarviewsample"
+        applicationId "com.mrerror.calendarviewsample"
         minSdkVersion versions.min_sdk_sample
         targetSdkVersion versions.target_sdk
         versionCode versions.version_code
