@@ -7,7 +7,10 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
+import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
 import com.kizitonwose.calendarview.model.CalendarDay
+import com.kizitonwose.calendarview.model.MyLocaleDate
+import com.kizitonwose.calendarview.model.TYPE
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
 import com.kizitonwose.calendarview.utils.Size
@@ -17,6 +20,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, HasBackButton {
 
@@ -25,7 +29,7 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
     override val toolbar: Toolbar?
         get() = binding.exSevenToolbar
 
-    private var selectedDate = LocalDate.now()
+    private var selectedDate: MyLocaleDate? = null
 
     private val dateFormatter = DateTimeFormatter.ofPattern("dd")
     private val dayFormatter = DateTimeFormatter.ofPattern("EEE")
@@ -64,29 +68,31 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
                         // We scroll to 4 days ago because we show max of five days on the screen
                         // so scrolling to 4 days ago brings the clicked date into full visibility
                         // at the end of the calendar view.
-//                        binding.exSevenCalendar.smoothScrollToDate(day.date.minusDays(4))
+                        binding.exSevenCalendar.smoothScrollToDate(day.date)
                     }
 
                     // Example: If you want the clicked date to always be centered on the screen,
                     // you would use: exSevenCalendar.smoothScrollToDate(day.date.minusDays(2))
 
-//                    if (selectedDate != day.date) {
-//                        val oldDate = selectedDate
-//                        selectedDate = day.date
-//                        binding.exSevenCalendar.notifyDateChanged(day.date)
-//                        oldDate?.let { binding.exSevenCalendar.notifyDateChanged(it) }
-//                    }
+                    if (selectedDate != day.date) {
+                        val oldDate = selectedDate
+                        selectedDate = day.date
+                        binding.exSevenCalendar.notifyDateChanged(day.date)
+                        oldDate?.let { binding.exSevenCalendar.notifyDateChanged(it) }
+                    }
                 }
             }
 
             fun bind(day: CalendarDay) {
                 this.day = day
-//                bind.exSevenDateText.text = dateFormatter.format(day.date)
-//                bind.exSevenDayText.text = dayFormatter.format(day.date)
-//                bind.exSevenMonthText.text = monthFormatter.format(day.date)
-//
-//                bind.exSevenDateText.setTextColor(view.context.getColorCompat(if (day.date == selectedDate) R.color.example_7_yellow else R.color.example_7_white))
-//                bind.exSevenSelectedView.isVisible = day.date == selectedDate
+                bind.exSevenDateText.text = "${day.date.yearMonth.get(Calendar.DAY_OF_MONTH)} "
+                bind.exSevenDayText.text =
+                    "${day.date.yearMonth.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale("ar"))}"
+                bind.exSevenMonthText.text =
+                    "${day.date.yearMonth.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale("ar"))}"
+
+                bind.exSevenDateText.setTextColor(view.context.getColorCompat(if (day.date == selectedDate) R.color.example_7_yellow else R.color.example_7_white))
+                bind.exSevenSelectedView.isVisible = day.date == selectedDate
             }
         }
 
@@ -97,7 +103,8 @@ class Example7Fragment : BaseFragment(R.layout.example_7_fragment), HasToolbar, 
 
         val currentMonth = YearMonth.now()
         // Value for firstDayOfWeek does not matter since inDates and outDates are not generated.
-//        binding.exSevenCalendar.setup(currentMonth, currentMonth.plusMonths(3), DayOfWeek.values().random())
-//        binding.exSevenCalendar.scrollToDate(LocalDate.now())
+        binding.exSevenCalendar.setup(0, 3, daysOfWeekFromLocale().first(), TYPE.HIJRI)
+        val today = UmmalquraCalendar()
+        binding.exSevenCalendar.scrollToDate(MyLocaleDate(today.get(Calendar.DAY_OF_MONTH), today))
     }
 }
