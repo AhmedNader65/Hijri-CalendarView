@@ -245,7 +245,7 @@ internal class CalendarAdapter(
     }
 
     internal fun getAdapterPosition(month: Calendar): Int {
-        return months.indexOfFirst { it.calendar.get(Calendar.MONTH) == month.get(Calendar.MONTH) }
+        return months.indexOfFirst { it.calendar.get(Calendar.MONTH) == month.get(Calendar.MONTH) && it.calendar.get(Calendar.YEAR) == month.get(Calendar.YEAR) }
     }
 
     internal fun getAdapterPosition(date: MyLocaleDate): Int {

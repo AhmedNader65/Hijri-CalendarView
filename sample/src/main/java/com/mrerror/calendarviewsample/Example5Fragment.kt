@@ -175,7 +175,7 @@ class Example5Fragment : BaseFragment(R.layout.example_5_fragment), HasToolbar {
 
         binding.exFiveCalendar.monthScrollListener = { month ->
             val ar = Locale("ar")
-            val title = "${month.calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)}"
+            val title = "${month.calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, ar)} - ${month.calendar.get(Calendar.YEAR)}"
             binding.exFiveMonthYearText.text = title
             selectedDate?.let {
                 // Clear selection if we scroll to a new month.
