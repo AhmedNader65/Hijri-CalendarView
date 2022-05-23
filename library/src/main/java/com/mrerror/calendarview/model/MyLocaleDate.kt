@@ -23,6 +23,9 @@ data class MyLocaleDate(val dayOfMonth: Int, var yearMonth: Calendar) {
                 cal.set(UmmalquraCalendar.MONTH, cal.get(UmmalquraCalendar.MONTH) + 1)
         } else {
             cal = Calendar.getInstance()
+            cal.set(Calendar.DAY_OF_MONTH, yearMonth.get(Calendar.DAY_OF_MONTH))
+            cal.set(Calendar.YEAR, yearMonth.get(Calendar.YEAR))
+            cal.set(Calendar.MONTH, yearMonth.get(Calendar.MONTH))
             cal.add(Calendar.MONTH, 1)
         }
         return cal
@@ -43,6 +46,9 @@ data class MyLocaleDate(val dayOfMonth: Int, var yearMonth: Calendar) {
                 cal.set(UmmalquraCalendar.MONTH, cal.get(UmmalquraCalendar.MONTH) - 1)
         } else {
             cal = Calendar.getInstance()
+            cal.set(Calendar.DAY_OF_MONTH, yearMonth.get(Calendar.DAY_OF_MONTH))
+            cal.set(Calendar.YEAR, yearMonth.get(Calendar.YEAR))
+            cal.set(Calendar.MONTH, yearMonth.get(Calendar.MONTH))
             cal.add(Calendar.MONTH, -1)
         }
         return cal
