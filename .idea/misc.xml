@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Nader/AndroidStudioProjects/CalendarView/sample/src/main/res/drawable/example_1_selected_bg.xml" value="0.147" />
         <entry key="..\:/Users/Nader/AndroidStudioProjects/CalendarView/sample/src/main/res/layout/calendar_day_legend.xml" value="0.165625" />
+        <entry key="..\:/Users/Nader/AndroidStudioProjects/CalendarView/sample/src/main/res/layout/example_1_calendar_day.xml" value="0.16822916666666668" />
         <entry key="..\:/Users/Nader/AndroidStudioProjects/CalendarView/sample/src/main/res/layout/example_1_fragment.xml" value="0.16302083333333334" />
         <entry key="..\:/Users/Nader/AndroidStudioProjects/CalendarView/sample/src/main/res/layout/example_5_calendar_day.xml" value="0.165625" />
         <entry key="..\:/Users/Nader/AndroidStudioProjects/CalendarView/sample/src/main/res/layout/example_5_calendar_header.xml" value="0.165625" />

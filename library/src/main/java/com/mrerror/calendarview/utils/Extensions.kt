@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -38,4 +39,16 @@ internal val CoroutineScope.job: Job
 internal fun View.getVerticalMargins(): Int {
     val marginParams = layoutParams as? ViewGroup.MarginLayoutParams
     return marginParams?.topMargin.orZero() + marginParams?.bottomMargin.orZero()
+}
+
+fun DayOfWeek.calendarIndex(): Int {
+    return when (ordinal) {
+        6 -> 1
+        7 -> 2
+        1 -> 3
+        2 -> 4
+        3 -> 5
+        4 -> 6
+        else -> 7
+    }
 }

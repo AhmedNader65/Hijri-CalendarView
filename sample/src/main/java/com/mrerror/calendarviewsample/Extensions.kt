@@ -12,9 +12,9 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
-import java.time.DayOfWeek
 import java.time.temporal.WeekFields
 import java.util.*
+import java.time.DayOfWeek
 
 fun View.makeVisible() {
     visibility = View.VISIBLE
@@ -53,7 +53,7 @@ internal fun Context.getColorCompat(@ColorRes color: Int) = ContextCompat.getCol
 internal fun TextView.setTextColorRes(@ColorRes color: Int) = setTextColor(context.getColorCompat(color))
 
 fun daysOfWeekFromLocale(): Array<DayOfWeek> {
-    val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+    val firstDayOfWeek = WeekFields.of(Locale("ar")).firstDayOfWeek
     var daysOfWeek = DayOfWeek.values()
     // Order `daysOfWeek` array so that firstDayOfWeek is at index 0.
     // Only necessary if firstDayOfWeek != DayOfWeek.MONDAY which has ordinal 0.

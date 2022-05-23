@@ -2,6 +2,7 @@ package com.mrerror.calendarview.model
 
 import android.util.Log
 import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
+import com.mrerror.calendarview.utils.calendarIndex
 import kotlinx.coroutines.Job
 import java.time.DayOfWeek
 import java.time.YearMonth
@@ -290,6 +291,8 @@ internal data class MonthConfig(
                     cal.set(UmmalquraCalendar.YEAR, calendar.get(UmmalquraCalendar.YEAR))
                     cal.set(UmmalquraCalendar.MONTH, calendar.get(UmmalquraCalendar.MONTH))
                     cal.set(UmmalquraCalendar.DAY_OF_MONTH, it)
+                    cal.firstDayOfWeek = firstDayOfWeek.calendarIndex()
+                    Calendar.SUNDAY
                     CalendarDay(
                         MyLocaleDate(it, cal),
 //                        LocalDate.of(year, month, it),
@@ -303,6 +306,7 @@ internal data class MonthConfig(
                     cal.set(Calendar.YEAR, calendar.get(UmmalquraCalendar.YEAR))
                     cal.set(Calendar.MONTH, calendar.get(UmmalquraCalendar.MONTH))
                     cal.set(Calendar.DAY_OF_MONTH, it)
+                    cal.firstDayOfWeek = firstDayOfWeek.value
                     CalendarDay(MyLocaleDate(it, cal), DayOwner.THIS_MONTH, cal.get(UmmalquraCalendar.WEEK_OF_YEAR))
                 }
             }

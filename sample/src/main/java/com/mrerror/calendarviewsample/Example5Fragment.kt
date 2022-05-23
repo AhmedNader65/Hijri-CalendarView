@@ -95,7 +95,7 @@ class Example5Fragment : BaseFragment(R.layout.example_5_fragment), HasToolbar {
         val daysOfWeek = daysOfWeekFromLocale()
 
         val currentMonth = UmmalquraCalendar()
-        binding.exFiveCalendar.setup(10, 10, daysOfWeek.first(), TYPE.HIJRI)
+        binding.exFiveCalendar.setup(0, 1, daysOfWeek.first(), TYPE.HIJRI)
         binding.exFiveCalendar.scrollToMonth(currentMonth)
 
         class DayViewContainer(view: View) : ViewContainer(view) {
