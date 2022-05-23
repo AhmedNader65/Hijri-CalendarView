@@ -722,6 +722,82 @@ open class CalendarView : RecyclerView {
         )
     }
 
+    /**
+     * Setup the CalendarView, asynchronously.
+     * Useful if your [startMonth] and [endMonth] values are many years apart.
+     * See [updateMonthRange] and [updateMonthRangeAsync] to change the
+     * [startMonth] and [endMonth] values.
+     *
+     * Note: the setup MUST finish before any other methods can are called. To be
+     * notified when the setup is finished, provide a [completion] parameter.
+     *
+     * @param startMonth The first month on the calendar.
+     * @param endMonth The last month on the calendar.
+     * @param firstDayOfWeek An instance of [DayOfWeek] enum to be the first day of week.
+     */
+    @JvmOverloads
+    fun setupAsync(
+        prevMonth: Int, nextMonth: Int, firstDayOfWeek: DayOfWeek, type: TYPE,
+        completion: Completion? = null
+    ) {
+        configJob?.cancel()
+
+        if (type == TYPE.HIJRI) {
+            val startCalendar = UmmalquraCalendar()
+            if (startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth < 0) {
+                startCalendar.set(
+                    UmmalquraCalendar.YEAR,
+                    startCalendar.get(UmmalquraCalendar.YEAR) - (((startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth).absoluteValue / 11) + 1) as Int
+                )
+                val offset = (startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth) + 12
+                startCalendar.set(UmmalquraCalendar.MONTH, offset)
+            } else
+                startCalendar.set(UmmalquraCalendar.MONTH, startCalendar.get(UmmalquraCalendar.MONTH) - prevMonth)
+//
+            this.startCalendar = startCalendar
+            val endCalendar = UmmalquraCalendar()
+            if (endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth > 11) {
+                endCalendar.set(
+                    UmmalquraCalendar.YEAR,
+                    endCalendar.get(UmmalquraCalendar.YEAR) + (endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth) / 11 as Int
+                )
+                val offset = (endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth) % 11
+                endCalendar.set(UmmalquraCalendar.MONTH, offset)
+            } else
+                endCalendar.set(UmmalquraCalendar.MONTH, endCalendar.get(UmmalquraCalendar.MONTH) + nextMonth)
+//            endCalendar.add(Calendar.MONTH,  nextMonth)
+            this.endCalendar = endCalendar
+        } else {
+            val startCalendar = Calendar.getInstance()
+            startCalendar.add(Calendar.MONTH, -prevMonth)
+            this.startCalendar = startCalendar
+            val endCalendar = Calendar.getInstance()
+            endCalendar.add(Calendar.MONTH, nextMonth)
+            this.endCalendar = endCalendar
+        }
+
+        this.prevMonth = prevMonth
+        this.nextMonth = nextMonth
+        this.type = type
+        this.firstDayOfWeek = firstDayOfWeek
+        configJob = GlobalScope.launch {
+            val monthConfig = MonthConfig(
+                outDateStyle,
+                inDateStyle,
+                maxRowCount,
+                startCalendar!!,
+                endCalendar!!,
+                firstDayOfWeek,
+                hasBoundaries,
+                Job()
+            )
+            withContext(Main) {
+                finishSetup(monthConfig)
+                completion?.invoke()
+            }
+        }
+    }
+
     private fun finishSetup(monthConfig: MonthConfig) {
         removeOnScrollListener(scrollListenerInternal)
         addOnScrollListener(scrollListenerInternal)
