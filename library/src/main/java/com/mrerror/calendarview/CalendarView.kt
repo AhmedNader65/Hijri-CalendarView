@@ -737,7 +737,10 @@ open class CalendarView : RecyclerView {
      */
     @JvmOverloads
     fun setupAsync(
-        prevMonth: Int, nextMonth: Int, firstDayOfWeek: DayOfWeek, type: TYPE,
+        prevMonth: Int,
+        nextMonth: Int,
+        firstDayOfWeek: DayOfWeek,
+        type: TYPE,
         completion: Completion? = null
     ) {
         configJob?.cancel()
